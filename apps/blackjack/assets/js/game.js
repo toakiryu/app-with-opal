@@ -213,7 +213,8 @@ function startHand() {
   if (deck.length < NUM_DECKS * 52 * 0.25) {
     deck = createDeck();
     shuffleDeck(deck);
-  displayMessage(window.i18n ? window.i18n.t('msg.shuffling') : "Shuffling new deck...", false, 1500);
+    const shufflingMsg = window.i18n ? window.i18n.t('msg.shuffling') : "Shuffling new deck...";
+    displayMessage(shufflingMsg, false, 1500);
   }
 
   playerHands = [[deck.pop(), deck.pop()]];

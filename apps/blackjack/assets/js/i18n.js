@@ -96,7 +96,7 @@
       "footer.quickLinks.opal": "Opalプロジェクト",
       "footer.quickLinks.demo": "デモサイト",
       "footer.copyright": "© 2025 桐生トア. All rights reserved.",
-      "footer.madeWith": "Made with Opal",
+      "footer.madeWith": "Opalで作成",
     },
   };
 

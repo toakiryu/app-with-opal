@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0d5e3a;
+        }
+        canvas {
+            display: none;
+        }
+        .preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .preview-item {
+            text-align: center;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .preview-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .preview-item p {
+            margin: 5px 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+        button {
+            background: #0d5e3a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #094029;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 Blackjack PWA Icon Generator</h1>
+        <p>このツールは、ブラックジャックアプリのPWAアイコンを生成します。</p>
+        
+        <button onclick="generateIcons()">アイコンを生成</button>
+        <button onclick="downloadAll()">すべてダウンロード</button>
+        
+        <div class="info">
+            <strong>📝 使い方:</strong>
+            <ol>
+                <li>「アイコンを生成」ボタンをクリック</li>
+                <li>生成されたアイコンをプレビュー</li>
+                <li>「すべてダウンロード」で一括ダウンロード</li>
+                <li>ダウンロードしたファイルを <code>assets/images/</code> フォルダに配置</li>
+            </ol>
+        </div>
+        
+        <div class="preview" id="preview"></div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const sizes = [16, 32, 57, 60, 72, 76, 96, 114, 120, 128, 144, 152, 180, 192, 384, 512];
+        const generatedImages = [];
+        
+        function generateIcons() {
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            generatedImages.length = 0;
+            
+            sizes.forEach(size => {
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = size;
+                canvas.height = size;
+                
+                // 背景のグラデーション
+                const gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0d5e3a');
+                gradient.addColorStop(1, '#094029');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+                
+                // カードのシンボルを描画
+                ctx.fillStyle = '#d4af37';
+                
+                // スペードとハートを組み合わせた装飾
+                const centerX = size / 2;
+                const centerY = size / 2;
+                const scale = size / 150;
+                
+                // スペード
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 30 * scale);
+                ctx.bezierCurveTo(
+                    centerX - 15 * scale, centerY - 30 * scale,
+                    centerX - 30 * scale, centerY - 15 * scale,
+                    centerX - 20 * scale, centerY + 10 * scale
+                );
+                ctx.bezierCurveTo(
+                    centerX - 15 * scale, centerY + 15 * scale,
+                    centerX - 10 * scale, centerY + 15 * scale,
+                    centerX, centerY + 20 * scale
+                );
+                ctx.bezierCurveTo(
+                    centerX + 10 * scale, centerY + 15 * scale,
+                    centerX + 15 * scale, centerY + 15 * scale,
+                    centerX + 20 * scale, centerY + 10 * scale
+                );
+                ctx.bezierCurveTo(
+                    centerX + 30 * scale, centerY - 15 * scale,
+                    centerX + 15 * scale, centerY - 30 * scale,
+                    centerX, centerY - 30 * scale
+                );
+                ctx.fill();
+                
+                // "BJ" テキスト (Blackjackの略)
+                if (size >= 72) {
+                    ctx.fillStyle = '#f0d678';
+                    ctx.font = `bold ${size * 0.3}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('BJ', centerX, centerY + 5 * scale);
+                }
+                
+                // 角を丸くするマスク
+                ctx.globalCompositeOperation = 'destination-in';
+                ctx.beginPath();
+                const radius = size * 0.15;
+                ctx.moveTo(radius, 0);
+                ctx.lineTo(size - radius, 0);
+                ctx.quadraticCurveTo(size, 0, size, radius);
+                ctx.lineTo(size, size - radius);
+                ctx.quadraticCurveTo(size, size, size - radius, size);
+                ctx.lineTo(radius, size);
+                ctx.quadraticCurveTo(0, size, 0, size - radius);
+                ctx.lineTo(0, radius);
+                ctx.quadraticCurveTo(0, 0, radius, 0);
+                ctx.fill();
+                
+                // プレビューに追加
+                const dataUrl = canvas.toDataURL('image/png');
+                generatedImages.push({ size, dataUrl });
+                
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                    <img src="${dataUrl}" alt="Icon ${size}x${size}">
+                    <p>${size}x${size}</p>
+                    <button onclick="downloadIcon(${size})">DL</button>
+                `;
+                preview.appendChild(previewItem);
+            });
+            
+            alert('アイコンの生成が完了しました!');
+        }
+        
+        function downloadIcon(size) {
+            const image = generatedImages.find(img => img.size === size);
+            if (image) {
+                const link = document.createElement('a');
+                link.download = `icon-${size}x${size}.png`;
+                link.href = image.dataUrl;
+                link.click();
+            }
+        }
+        
+        function downloadAll() {
+            if (generatedImages.length === 0) {
+                alert('先に「アイコンを生成」をクリックしてください。');
+                return;
+            }
+            
+            generatedImages.forEach(image => {
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.download = `icon-${image.size}x${image.size}.png`;
+                    link.href = image.dataUrl;
+                    link.click();
+                }, 100 * generatedImages.indexOf(image));
+            });
+        }
+    </script>
+</body>
+</html>

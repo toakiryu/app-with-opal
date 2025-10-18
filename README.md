@@ -17,6 +17,8 @@ app-with-opal/
 
 ## アプリの追加方法
 
+詳細な手順は [クイックスタートガイド](docs/QUICK_START.md) をご覧ください。
+
 1. `apps/` ディレクトリに新しいフォルダを作成します
 2. Opal で作成したアプリのファイルをフォルダにコピーします
 3. 各アプリフォルダに README.md を追加し、アプリの説明を記載します
@@ -54,6 +56,8 @@ app-with-opal/
 ```
 
 ## How to Add an App
+
+See the [Quick Start Guide](docs/QUICK_START.md) for detailed instructions.
 
 1. Create a new folder in the `apps/` directory
 2. Copy your Opal-created app files into the folder

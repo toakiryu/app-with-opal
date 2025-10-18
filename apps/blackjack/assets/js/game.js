@@ -340,7 +340,7 @@ function resolveHand(specialOutcome = null) {
 
     playerHands.forEach((hand, index) => {
       const playerScore = calculateHandValue(hand);
-      const betForHand = playerBets && playerBets[index] !== undefined ? playerBets[index] : currentBet;
+      const betForHand = playerHands.length > 1 ? currentBet : currentBet;
 
       if (playerScore > 21) {
         finalMessage += (window.i18n ? window.i18n.t('msg.handResult.bust', { hand: index + 1 }) : `Hand ${index + 1}: Bust! You lose.`);
@@ -448,3 +448,4 @@ function init() {
 }
 
 init();
+

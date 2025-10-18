@@ -54,7 +54,7 @@ While Blackjack may appear simple at first glance, it is actually a deeply strat
 
 ## スクリーンショット / Screenshots
 
-![Blackjack Game](/apps/blackjack/assets/images/desktop-main-content.png)
+![Blackjack Game](./assets/images/desktop-main-content.png)
 
 ## ファイル構造 / File Structure
 

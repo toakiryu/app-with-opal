@@ -39,8 +39,12 @@ While Blackjack may appear simple at first glance, it is actually a deeply strat
 - 💵 残高管理システム - 初期残高$1000からスタート
 - 🎯 リアルタイムスコア表示 - 各ハンドの合計値を即座に表示
 - 🎲 マルチデッキ対応 - 6デッキ使用でリアルなカジノ体験
+- 📲 **PWA対応** - モバイルデバイスにアプリとしてインストール可能（フルスクリーン表示）
+- 🔄 **オフライン対応** - Service Workerによるキャッシングで一度アクセスすればオフラインでも動作
 
 ## 使用方法 / How to Use
+
+### 基本的なプレイ方法
 
 1. **ベットを置く** - 画面下部のチップをクリックしてベット額を選択
 2. **Dealボタンをクリック** - ゲームが開始され、プレイヤーとディーラーにカードが配られます
@@ -52,6 +56,24 @@ While Blackjack may appear simple at first glance, it is actually a deeply strat
 4. **結果を確認** - 21に近い方が勝利！
 5. **New Hand** - 新しいラウンドを開始
 
+### 📲 PWAとしてインストール（推奨）
+
+モバイルデバイスのホーム画面にアプリとして追加することで、ブラウザのUIなしでフルスクリーン体験ができます。
+
+**iOS (Safari)**
+1. Safariでアプリを開く
+2. 共有ボタン(□↑)をタップ
+3. 「ホーム画面に追加」を選択
+4. 「追加」をタップ
+
+**Android (Chrome)**
+1. Chromeでアプリを開く
+2. メニュー(⋮)を開く
+3. 「ホーム画面に追加」または「アプリをインストール」を選択
+4. 「インストール」をタップ
+
+詳しいPWAセットアップガイドは [PWA_SETUP.md](./PWA_SETUP.md) を参照してください。
+
 ## スクリーンショット / Screenshots
 
 ![Blackjack Game](./assets/images/desktop-main-content.png)
@@ -60,16 +82,22 @@ While Blackjack may appear simple at first glance, it is actually a deeply strat
 
 ```text
 blackjack/
-├── README.md          # このファイル / This file
-├── index.html         # メインHTMLファイル / Main HTML file
+├── README.md              # このファイル / This file
+├── PWA_SETUP.md           # PWAセットアップガイド / PWA setup guide
+├── index.html             # メインHTMLファイル / Main HTML file
+├── manifest.json          # PWAマニフェスト / PWA manifest
+├── service-worker.js      # Service Worker / Service worker
 ├── assets/
 │   ├── css/
-│   │   └── style.css # カスタムスタイル(カジノテーマ) / Custom styles (Casino theme)
+│   │   └── style.css     # カスタムスタイル(カジノテーマ) / Custom styles (Casino theme)
 │   ├── js/
-│   │   ├── script.js # コアゲームロジック / Core game logic
-│   │   ├── game.js   # UI制御とイベント処理 / UI control and event handling
-│   │   └── i18n.js   # 国際化モジュール / Internationalization module
-│   └── images/       # 画像ファイル / Image files
+│   │   ├── script.js     # コアゲームロジック / Core game logic
+│   │   ├── game.js       # UI制御とイベント処理 / UI control and event handling
+│   │   └── i18n.js       # 国際化モジュール / Internationalization module
+│   └── images/
+│       ├── icon-*.png           # PWAアイコン(各サイズ) / PWA icons (various sizes)
+│       ├── icon-generator.html  # アイコン生成ツール / Icon generator tool
+│       └── generate-icons.js    # Node.jsアイコン生成スクリプト / Node.js icon generator
 ```
 
 ## 技術スタック / Tech Stack

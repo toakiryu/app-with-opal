@@ -1,0 +1,168 @@
+/* ========================================
+   Color Palette - Casino Theme
+   ======================================== */
+:root {
+  /* Casino Green - Main table color */
+  --casino-green: #0d5e3a;
+  --casino-green-dark: #094029;
+  --casino-green-light: #12754a;
+  
+  /* Luxurious Gold Accents */
+  --gold: #d4af37;
+  --gold-light: #f0d678;
+  --gold-dark: #b8941f;
+  
+  /* Deep Navy - Sophisticated contrast */
+  --navy: #1a2332;
+  --navy-light: #2a3544;
+  --navy-dark: #0f1419;
+  
+  /* Rich Red - For chips and accents */
+  --casino-red: #c41e3a;
+  --casino-red-dark: #a01828;
+  
+  /* Neutral tones */
+  --cream: #f5f5dc;
+  --smoke: #2c2c2c;
+  --white-soft: #fafafa;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  touch-action: manipulation;
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+}
+
+/* GitHub Corner */
+.github-corner svg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  fill: var(--gold);
+  color: var(--navy);
+  transition: fill 0.3s ease;
+}
+.github-corner:hover svg {
+  fill: var(--gold-light);
+}
+.github-corner .octo-arm {
+  transform-origin: 130px 106px;
+}
+.github-corner:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+}
+@keyframes octocat-wave {
+  0%, 100% { transform: rotate(0); }
+  20%, 60% { transform: rotate(-25deg); }
+  40%, 80% { transform: rotate(10deg); }
+}
+@media (max-width: 500px) {
+  .github-corner:hover .octo-arm {
+    animation: none;
+  }
+  .github-corner .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+  }
+}
+
+/* Game container min-height */
+#game-container.min-h-95vh {
+  min-height: 95vh;
+}
+.card {
+  width: clamp(60px, 15vw, 110px);
+  height: clamp(84px, 21vw, 154px);
+  transform-style: preserve-3d;
+  transition: transform 0.6s, opacity 0.6s;
+  position: relative;
+}
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.card-front {
+  background-color: white;
+}
+.card-back {
+  background: linear-gradient(135deg, var(--navy) 25%, transparent 25%) -50px 0,
+    linear-gradient(225deg, var(--navy) 25%, transparent 25%) -50px 0,
+    linear-gradient(315deg, var(--navy) 25%, transparent 25%),
+    linear-gradient(45deg, var(--navy) 25%, transparent 25%);
+  background-size: 30px 30px;
+  background-color: var(--casino-red-dark);
+  border: 2px solid var(--gold);
+  transform: rotateY(180deg);
+}
+.flipped {
+  transform: rotateY(180deg);
+}
+.hand-container > .card {
+  margin-left: -35%;
+  transition: transform 0.5s ease-out;
+}
+.hand-container > .card:first-child {
+  margin-left: 0;
+}
+@keyframes deal-card {
+  from {
+    transform: translate(0, -200%) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+.deal-in {
+  animation: deal-card 0.5s ease-out forwards;
+}
+.chip {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.chip:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+.chip:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+.action-button {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.action-button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+.action-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+.split-hand-container {
+  position: relative;
+  padding: 1rem;
+  border: 2px dashed transparent;
+  border-radius: 0.5rem;
+  transition: border-color 0.3s;
+}
+.split-hand-container.active-hand {
+  border-color: var(--gold); /* Active hand highlight in gold */
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Score displays */
+#dealer-score,
+#player-score {
+  background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(26, 35, 50, 0.7) 100%);
+  border: 1px solid var(--gold-dark);
+  color: var(--gold-light);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}

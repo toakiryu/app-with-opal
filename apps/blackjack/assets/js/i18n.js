@@ -50,7 +50,7 @@
       "footer.quickLinks.opal": "Opal Project",
       "footer.quickLinks.demo": "Demo Site",
       "footer.copyright": "© 2025 Toa Kiryu. All rights reserved.",
-      "footer.madeWith": "Made with Opal",
+      "footer.madeWith": "Made with",
     },
     ja: {
       "btn.deal": "ディール",

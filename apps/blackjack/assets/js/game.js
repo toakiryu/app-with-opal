@@ -248,6 +248,11 @@ function placeBet(amount) {
     currentBet += amount;
     playerBalance -= amount;
     updateUI();
+    
+    // 効果音: チップ配置
+    if (window.Sfx) {
+      window.Sfx.playSound('chip');
+    }
   }
 }
 
@@ -275,6 +280,11 @@ function startHand() {
   dealerHand = [deck.pop(), deck.pop()];
   activeHandIndex = 0;
 
+  // 効果音: カード配布
+  if (window.Sfx) {
+    window.Sfx.playSound('card-flip');
+  }
+
   renderHands();
   updateUI();
 
@@ -297,10 +307,21 @@ function playerHit() {
 
   const currentHand = playerHands[activeHandIndex];
   currentHand.push(deck.pop());
+  
+  // 効果音: カード引く
+  if (window.Sfx) {
+    window.Sfx.playSound('card-flip');
+  }
+  
   renderHands();
 
   const handValue = calculateHandValue(currentHand);
   if (handValue > 21) {
+    // 効果音: バースト
+    if (window.Sfx) {
+      window.Sfx.playSound('bust');
+    }
+    
     const msg = window.i18n
       ? window.i18n.t("msg.handBusts", { hand: activeHandIndex + 1 })
       : `Hand ${activeHandIndex + 1} Busts!`;
@@ -312,6 +333,12 @@ function playerHit() {
 
 function playerStand() {
   if (gameState !== "PLAYER_TURN") return;
+  
+  // 効果音: スタンド（オプション）
+  if (window.Sfx) {
+    window.Sfx.playSound('stand');
+  }
+  
   moveToNextHandOrDealer();
 }
 
@@ -401,6 +428,14 @@ function resolveHand(specialOutcome = null) {
       window.i18n ? window.i18n.t("msg.blackjackWin") : "Blackjack! You win!",
     );
     playerBalance += currentBet + currentBet * 1.5;
+    
+    // 効果音: 勝利
+    if (window.Sfx) {
+      window.Sfx.playSound('win');
+    }
+    
+    // ビジュアルエフェクト: 勝利パルス
+    addWinEffect();
   } else if (specialOutcome === "Push") {
     displayMessage(window.i18n ? window.i18n.t("msg.push") : "Push!");
     playerBalance += currentBet;
@@ -422,10 +457,20 @@ function resolveHand(specialOutcome = null) {
           ? window.i18n.t("msg.handResult.win", { hand: index + 1 })
           : `Hand ${index + 1}: You win!`;
         totalWinnings += betForHand * 2;
+        
+        // 効果音: 勝利（最初の勝ちハンドでのみ再生）
+        if (window.Sfx && index === 0) {
+          window.Sfx.playSound('win');
+        }
       } else if (playerScore < dealerScore) {
         finalMessage += window.i18n
           ? window.i18n.t("msg.handResult.dealerWins", { hand: index + 1 })
           : `Hand ${index + 1}: Dealer wins.`;
+        
+        // 効果音: 敗北（最初の負けハンドでのみ再生）
+        if (window.Sfx && index === 0 && totalWinnings === 0) {
+          window.Sfx.playSound('lose');
+        }
       } else {
         finalMessage += window.i18n
           ? window.i18n.t("msg.handResult.push", { hand: index + 1 })
@@ -437,6 +482,13 @@ function resolveHand(specialOutcome = null) {
 
     displayMessage(finalMessage);
     playerBalance += totalWinnings;
+    
+    // ビジュアルエフェクト: 勝ちまたは負け
+    if (totalWinnings > currentBet) {
+      addWinEffect();
+    } else if (totalWinnings === 0) {
+      addLoseEffect();
+    }
   }
 
   currentBet = 0;
@@ -449,6 +501,11 @@ function resolveHand(specialOutcome = null) {
 
   // 破産チェック
   if (playerBalance <= 0) {
+    // 効果音: 破産
+    if (window.Sfx) {
+      window.Sfx.playSound('bust');
+    }
+    
     handleBankruptcy();
   } else {
     updateUI();
@@ -615,9 +672,97 @@ function resetForNewHand() {
   updateUI();
 }
 
+// ============================================
+// ビジュアルエフェクト用ヘルパー関数
+// ============================================
+
+/**
+ * 勝利エフェクトを追加
+ */
+function addWinEffect() {
+  // メッセージボックスに勝利アニメーション
+  if (messageBox) {
+    messageBox.classList.add('win-pulse');
+    setTimeout(() => {
+      messageBox.classList.remove('win-pulse');
+    }, 900);
+  }
+  
+  // バランス表示にスコア増加アニメーション
+  if (balanceEl) {
+    balanceEl.classList.add('score-increase');
+    setTimeout(() => {
+      balanceEl.classList.remove('score-increase');
+    }, 600);
+  }
+  
+  // ベット表示にも軽いエフェクト
+  if (betEl) {
+    betEl.classList.add('win-glow');
+    setTimeout(() => {
+      betEl.classList.remove('win-glow');
+    }, 1200);
+  }
+}
+
+/**
+ * 敗北エフェクトを追加
+ */
+function addLoseEffect() {
+  // メッセージボックスに敗北アニメーション
+  if (messageBox) {
+    messageBox.classList.add('lose-shake');
+    setTimeout(() => {
+      messageBox.classList.remove('lose-shake');
+    }, 500);
+  }
+  
+  // バランス表示にスコア減少アニメーション
+  if (balanceEl) {
+    balanceEl.classList.add('score-decrease');
+    setTimeout(() => {
+      balanceEl.classList.remove('score-decrease');
+    }, 600);
+  }
+}
+
+/**
+ * カードにディールアニメーションを追加
+ */
+function addCardDealAnimation(cardElement, delay = 0) {
+  if (!cardElement) return;
+  
+  cardElement.classList.add('dealing');
+  cardElement.style.animationDelay = `${delay}ms`;
+  
+  setTimeout(() => {
+    cardElement.classList.remove('dealing');
+  }, 500 + delay);
+}
+
+/**
+ * チップ配置アニメーションを追加
+ */
+function addChipPlaceAnimation() {
+  const betEl = document.getElementById('bet');
+  if (betEl) {
+    betEl.classList.add('placing');
+    setTimeout(() => {
+      betEl.classList.remove('placing');
+    }, 400);
+  }
+}
+
+// ============================================
+// イベントリスナー
+// ============================================
+
 // Event Listeners
 chipBtns.forEach((btn) => {
-  btn.addEventListener("click", () => placeBet(parseInt(btn.dataset.value)));
+  btn.addEventListener("click", () => {
+    placeBet(parseInt(btn.dataset.value));
+    addChipPlaceAnimation();
+  });
 });
 clearBetBtn.addEventListener("click", clearBet);
 dealBtn.addEventListener("click", startHand);

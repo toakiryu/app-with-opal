@@ -1,0 +1,207 @@
+/**
+ * Settings Modal Styles
+ * 設定モーダル専用のスタイル
+ */
+
+/* 設定モーダル内のセクション */
+.settings-section {
+  margin-bottom: 1.5rem;
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+/* 設定項目 */
+.setting-item {
+  margin-bottom: 1rem;
+}
+
+.setting-item:last-child {
+  margin-bottom: 0;
+}
+
+.setting-item label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.setting-label {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95em;
+  flex: 1;
+}
+
+.setting-description {
+  margin: 5px 0 0 0;
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+/* トグルボタン */
+.setting-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2em;
+  min-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.setting-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: scale(1.05);
+}
+
+.setting-toggle-btn.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%);
+  border-color: rgba(212, 175, 55, 0.6);
+  color: #d4af37;
+}
+
+.setting-toggle-btn:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.5);
+  outline-offset: 2px;
+}
+
+.toggle-icon {
+  display: inline-block;
+}
+
+/* 音量スライダー */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  max-width: 300px;
+}
+
+input[type="range"].slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+input[type="range"].slider::-webkit-slider-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type="range"].slider::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"].slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.volume-value {
+  min-width: 45px;
+  text-align: right;
+  font-weight: 600;
+  color: #d4af37;
+  font-size: 0.9em;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .slider-container {
+    max-width: 100%;
+  }
+
+  .setting-toggle-btn {
+    padding: 6px 12px;
+    font-size: 1.1em;
+  }
+}
+
+/* アクセシビリティ：フォーカス表示の強化 */
+.setting-item:focus-within {
+  outline: 2px solid rgba(212, 175, 55, 0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 動きを減らすモード */
+.reduced-motion .setting-toggle-btn:hover {
+  transform: none !important;
+}
+
+.reduced-motion input[type="range"].slider::-webkit-slider-thumb:hover {
+  transform: none !important;
+}
+
+.reduced-motion input[type="range"].slider::-moz-range-thumb:hover {
+  transform: none !important;
+}
+
+/* フィードバックアニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}

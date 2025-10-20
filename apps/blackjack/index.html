@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
@@ -86,6 +86,9 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/effects.css" />
+    <link rel="stylesheet" href="assets/css/settings.css" />
+    <link rel="stylesheet" href="assets/css/settings-modal.css" />
     <script
       data-name="BMC-Widget"
       data-cfasync="false"
@@ -99,16 +102,24 @@
       data-y_margin="18"
     ></script>
   </head>
-  <body class="select-none">
-    <!-- Help Button -->
-    <button
-      id="help-button"
-      aria-label="ヘルプ"
-      title="ヘルプ（?）"
-      data-i18n="help.title"
-    >
-      ❓ ヘルプ
+  <body class="select-none scrollbar-hidden">
+    <!-- Menu Toggle Button (Mobile & Desktop) -->
+    <button id="menu-toggle-button" aria-label="メニュー" title="メニュー">
+      ☰
     </button>
+
+    <!-- Menu Dropdown -->
+    <div id="menu-dropdown" class="menu-dropdown hidden">
+      <button class="menu-item" id="menu-help" aria-label="ヘルプ">
+        <span class="menu-icon">❓</span>
+        <span class="menu-label" data-i18n="help.title">ヘルプ</span>
+      </button>
+      <button class="menu-item" id="menu-settings" aria-label="設定">
+        <span class="menu-icon">⚙️</span>
+        <span class="menu-label">設定</span>
+      </button>
+    </div>
+
     <!-- GitHub Corner -->
     <a
       href="https://github.com/toakiryu/app-with-opal"
@@ -226,7 +237,7 @@
                 class="text-xs px-3 py-1 bg-[#1e40af] hover:bg-[#1e3a8a] text-white rounded-lg transition-colors"
                 onclick="showScoreBoard()"
               >
-                📊 スコアボード
+                📊
               </button>
             </div>
 
@@ -541,7 +552,7 @@
     <!-- Help Modal -->
     <div
       id="help-modal"
-      class="modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-4xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
       role="dialog"
       aria-modal="true"
       aria-labelledby="help-modal-title"
@@ -550,83 +561,90 @@
       data-multi="false"
       tabindex="-1"
     >
-      <button
-        class="close-btn absolute top-4 right-4 text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
-        aria-label="閉じる"
-        title="閉じる"
-        tabindex="0"
-        onclick="if(window.ModalManager) window.ModalManager.close('help-modal');"
+      <div
+        class="modal-content relative bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-4xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
       >
-        ×
-      </button>
-      <h2
-        id="help-modal-title"
-        class="text-3xl font-bold text-[#f0d678] mb-4"
-        data-i18n="help.title"
-      >
-        ヘルプセンター
-      </h2>
-      <div class="flex justify-end mb-2">
         <button
-          id="help-start-tutorial"
-          class="btn-primary"
-          data-i18n="help.btn.startTutorial"
-          title="Start Tutorial Again"
+          class="close-btn absolute top-4 right-4 text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+          aria-label="閉じる"
+          title="閉じる"
+          tabindex="0"
+          onclick="if(window.ModalManager) window.ModalManager.close('help-modal');"
         >
-          Start Tutorial Again
+          ×
         </button>
-      </div>
-      <div class="mt-2 text-sm text-gray-300">
-        <h3 data-i18n="help.sections.rules.title">1. ゲームの基本ルール</h3>
-        <p data-i18n="help.sections.rules.desc"></p>
-        <h3 data-i18n="help.sections.actions.title">2. 各アクションの説明</h3>
-        <ul class="list-disc pl-6">
-          <li data-i18n="help.sections.actions.item.hit"></li>
-          <li data-i18n="help.sections.actions.item.stand"></li>
-          <li data-i18n="help.sections.actions.item.double"></li>
-          <li data-i18n="help.sections.actions.item.split"></li>
-        </ul>
-        <h3 data-i18n="help.sections.judgement.title">3. 勝敗の決まり方</h3>
-        <p data-i18n="help.sections.judgement.desc"></p>
-        <h3 data-i18n="help.sections.faq.title">4. よくある質問（FAQ）</h3>
-        <p data-i18n="help.sections.faq.desc"></p>
-        <h3 data-i18n="help.sections.glossary.title">5. 用語集</h3>
-        <p data-i18n="help.sections.glossary.desc"></p>
+        <h2
+          id="help-modal-title"
+          class="text-3xl font-bold text-[#f0d678] mb-4"
+          data-i18n="help.title"
+        >
+          ヘルプセンター
+        </h2>
+        <div class="flex justify-end mb-2">
+          <button
+            id="help-start-tutorial"
+            class="btn-primary"
+            data-i18n="help.btn.startTutorial"
+            title="Start Tutorial Again"
+          >
+            Start Tutorial Again
+          </button>
+        </div>
+        <div class="mt-2 text-sm text-gray-300">
+          <h3 data-i18n="help.sections.rules.title">1. ゲームの基本ルール</h3>
+          <p data-i18n="help.sections.rules.desc"></p>
+          <h3 data-i18n="help.sections.actions.title">2. 各アクションの説明</h3>
+          <ul class="list-disc pl-6">
+            <li data-i18n="help.sections.actions.item.hit"></li>
+            <li data-i18n="help.sections.actions.item.stand"></li>
+            <li data-i18n="help.sections.actions.item.double"></li>
+            <li data-i18n="help.sections.actions.item.split"></li>
+          </ul>
+          <h3 data-i18n="help.sections.judgement.title">3. 勝敗の決まり方</h3>
+          <p data-i18n="help.sections.judgement.desc"></p>
+          <h3 data-i18n="help.sections.faq.title">4. よくある質問（FAQ）</h3>
+          <p data-i18n="help.sections.faq.desc"></p>
+          <h3 data-i18n="help.sections.glossary.title">5. 用語集</h3>
+          <p data-i18n="help.sections.glossary.desc"></p>
 
-        <hr class="my-4 border-[#d4af37]/20" />
-        <h3 data-i18n="help.settings.title">ガイド設定</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
-          <label class="flex items-center gap-2">
-            <input type="checkbox" id="setting-show-tooltips" />
-            <span data-i18n="help.settings.showTooltips"></span>
-          </label>
-          <label class="flex items-center gap-2">
-            <input type="checkbox" id="setting-show-context" />
-            <span data-i18n="help.settings.showContextHelp"></span>
-          </label>
-          <label class="flex items-center gap-2">
-            <span data-i18n="help.settings.hintLevel"></span>
-            <select
-              id="setting-hint-level"
-              class="bg-[#1a2332] text-[#f0d678] px-2 py-1 rounded border border-[#d4af37]/40"
-            >
-              <option
-                value="beginner"
-                data-i18n="help.settings.hintLevel.beginner"
+          <hr class="my-4 border-[#d4af37]/20" />
+          <h3 data-i18n="help.settings.title">ガイド設定</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="setting-show-tooltips" />
+              <span data-i18n="help.settings.showTooltips"></span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="setting-show-context" />
+              <span data-i18n="help.settings.showContextHelp"></span>
+            </label>
+            <label class="flex items-center gap-2">
+              <span data-i18n="help.settings.hintLevel"></span>
+              <select
+                id="setting-hint-level"
+                class="bg-[#1a2332] text-[#f0d678] px-2 py-1 rounded border border-[#d4af37]/40"
               >
-                Beginner
-              </option>
-              <option
-                value="intermediate"
-                data-i18n="help.settings.hintLevel.intermediate"
-              >
-                Intermediate
-              </option>
-              <option value="expert" data-i18n="help.settings.hintLevel.expert">
-                Expert
-              </option>
-            </select>
-          </label>
+                <option
+                  value="beginner"
+                  data-i18n="help.settings.hintLevel.beginner"
+                >
+                  Beginner
+                </option>
+                <option
+                  value="intermediate"
+                  data-i18n="help.settings.hintLevel.intermediate"
+                >
+                  Intermediate
+                </option>
+                <option
+                  value="expert"
+                  data-i18n="help.settings.hintLevel.expert"
+                >
+                  Expert
+                </option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -634,7 +652,7 @@
     <!-- Bankruptcy Modal -->
     <div
       id="bankruptcy-modal"
-      class="modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
       role="dialog"
       aria-modal="true"
       aria-labelledby="bankruptcy-modal-title"
@@ -645,7 +663,7 @@
       tabindex="-1"
     >
       <div
-        class="bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 border-4 border-[#d4af37]/30 relative"
+        class="modal-content bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-md w-full mx-4 border-4 border-[#d4af37]/30 relative"
       >
         <button
           class="close-btn absolute top-4 right-4 text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
@@ -711,7 +729,7 @@
     <!-- Scoreboard Modal -->
     <div
       id="scoreboard-modal"
-      class="modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
       role="dialog"
       aria-modal="true"
       aria-labelledby="scoreboard-modal-title"
@@ -721,14 +739,14 @@
       tabindex="-1"
     >
       <div
-        class="bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-2xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
+        class="modal-content bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-2xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
       >
         <div class="flex justify-between items-center mb-6">
           <h2
             id="scoreboard-modal-title"
             class="text-3xl font-bold text-[#f0d678]"
           >
-            📊 スコアボード
+            📊 統計
           </h2>
           <button
             class="text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
@@ -784,11 +802,215 @@
       </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div
+      id="settings-modal"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-modal-title"
+      data-overlay="true"
+      data-lock-scroll="true"
+      data-multi="false"
+      tabindex="-1"
+    >
+      <div
+        class="modal-content bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-md w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h2
+            id="settings-modal-title"
+            class="text-3xl font-bold text-[#f0d678]"
+          >
+            ⚙️ 設定
+          </h2>
+          <button
+            class="text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+            aria-label="閉じる"
+            title="閉じる"
+            tabindex="0"
+            onclick="if(window.ModalManager) window.ModalManager.close('settings-modal');"
+          >
+            ×
+          </button>
+        </div>
+
+        <!-- サウンド設定 -->
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2">
+            🔊 サウンド設定
+          </h3>
+
+          <div class="space-y-4">
+            <!-- 効果音 ON/OFF -->
+            <div class="flex justify-between items-center">
+              <span class="text-gray-300">効果音</span>
+              <button
+                id="sound-enabled"
+                class="setting-toggle-btn"
+                aria-pressed="true"
+              >
+                <span class="toggle-icon">🔊</span>
+              </button>
+            </div>
+
+            <!-- 効果音の音量 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-gray-300 text-sm">効果音の音量</span>
+                <span id="sound-volume-value" class="text-[#d4af37] font-bold text-sm">80%</span>
+              </div>
+              <input
+                type="range"
+                id="sound-volume"
+                min="0"
+                max="100"
+                value="80"
+                step="1"
+                class="w-full slider"
+              />
+            </div>
+
+            <!-- BGM ON/OFF -->
+            <div class="flex justify-between items-center">
+              <span class="text-gray-300">BGM</span>
+              <button
+                id="music-enabled"
+                class="setting-toggle-btn"
+                aria-pressed="false"
+              >
+                <span class="toggle-icon">🎵</span>
+              </button>
+            </div>
+
+            <!-- BGMの音量 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-gray-300 text-sm">BGMの音量</span>
+                <span id="music-volume-value" class="text-[#d4af37] font-bold text-sm">50%</span>
+              </div>
+              <input
+                type="range"
+                id="music-volume"
+                min="0"
+                max="100"
+                value="50"
+                step="1"
+                class="w-full slider"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 表示設定 -->
+        <div>
+          <h3 class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2">
+            🎨 表示設定
+          </h3>
+
+          <div class="space-y-4">
+            <!-- 動きを減らす -->
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-300">動きを減らす</span>
+                <button
+                  id="reduced-motion"
+                  class="setting-toggle-btn"
+                  aria-pressed="false"
+                >
+                  <span class="toggle-icon">🎬</span>
+                </button>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                アニメーションを最小限に抑えます
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/sfx.js"></script>
+    <script src="assets/js/settings-sfx.js"></script>
     <script src="assets/js/guide.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         if (window.i18n) window.i18n.init();
+
+        // SFXの初期化
+        if (window.Sfx) {
+          window.Sfx.initSfx().then(() => {
+            console.log("[Main] SFX initialized");
+          });
+        }
+
+        // 設定UIの初期化
+        if (window.SettingsUI) {
+          window.SettingsUI.init();
+
+          // 設定トグルボタンのイベントリスナー
+          const settingsToggle = document.getElementById(
+            "settings-toggle-button"
+          );
+          if (settingsToggle) {
+            settingsToggle.addEventListener("click", () => {
+              window.SettingsUI.toggle();
+            });
+          }
+        }
+
+        // メニュートグルの初期化
+        const menuToggle = document.getElementById("menu-toggle-button");
+        const menuDropdown = document.getElementById("menu-dropdown");
+        const menuHelp = document.getElementById("menu-help");
+        const menuSettings = document.getElementById("menu-settings");
+
+        // メニュートグル
+        if (menuToggle && menuDropdown) {
+          menuToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            menuDropdown.classList.toggle("hidden");
+          });
+
+          // メニュー外クリックで閉じる
+          document.addEventListener("click", () => {
+            if (!menuDropdown.classList.contains("hidden")) {
+              menuDropdown.classList.add("hidden");
+            }
+          });
+
+          // メニュー内クリックは伝播を止める
+          menuDropdown.addEventListener("click", (e) => {
+            e.stopPropagation();
+          });
+        }
+
+        // メニュー - ヘルプ
+        if (menuHelp) {
+          menuHelp.addEventListener("click", () => {
+            // ヘルプモーダルを直接開く
+            if (window.ModalManager) {
+              window.ModalManager.open("help-modal");
+            }
+            menuDropdown.classList.add("hidden");
+          });
+        }
+
+        // メニュー - 設定
+        if (menuSettings) {
+          menuSettings.addEventListener("click", () => {
+            // 設定モーダルを直接開く
+            if (window.ModalManager) {
+              window.ModalManager.open("settings-modal");
+            }
+            // UIを更新
+            if (window.SettingsUI) {
+              window.SettingsUI.updateUI();
+            }
+            menuDropdown.classList.add("hidden");
+          });
+        }
       });
     </script>
     <script src="assets/js/score-manager.js"></script>
@@ -801,6 +1023,7 @@
           ModalManager.register("help-modal");
           ModalManager.register("bankruptcy-modal");
           ModalManager.register("scoreboard-modal");
+          ModalManager.register("settings-modal");
         }
       });
     </script>
@@ -815,7 +1038,7 @@
             .then((registration) => {
               console.log(
                 "Service Worker registered successfully:",
-                registration.scope,
+                registration.scope
               );
 
               // 新しいService Workerが利用可能になったときの処理

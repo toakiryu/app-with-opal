@@ -1,0 +1,259 @@
+/**
+ * Settings UI Styles
+ * 設定パネルのスタイル
+ */
+
+.settings-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 350px;
+}
+
+.settings-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  display: none;
+}
+
+.settings-panel h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.1em;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.settings-panel h3:not(:first-child) {
+  margin-top: 20px;
+}
+
+.setting-item {
+  margin-bottom: 15px;
+}
+
+.setting-item label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.setting-label {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.setting-description {
+  margin: 5px 0 0 0;
+  font-size: 0.85em;
+  color: #888;
+  font-style: italic;
+}
+
+/* トグルボタン */
+.toggle-button {
+  background: #e0e0e0;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2em;
+  min-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-button:hover {
+  background: #d0d0d0;
+  transform: scale(1.05);
+}
+
+.toggle-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.toggle-button:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.toggle-icon {
+  display: inline-block;
+}
+
+/* 音量スライダー */
+input[type="range"] {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.volume-value {
+  min-width: 45px;
+  text-align: right;
+  font-weight: 600;
+  color: #667eea;
+  font-size: 0.9em;
+}
+
+/* フィードバックメッセージ */
+.settings-feedback {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  z-index: 10000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* 設定トグルボタン（メイン） */
+#settings-toggle-button {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 999;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#settings-toggle-button:hover {
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+}
+
+#settings-toggle-button:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .settings-panel {
+    background: rgba(30, 30, 30, 0.95);
+    color: #e0e0e0;
+  }
+
+  .settings-panel h3 {
+    color: #e0e0e0;
+    border-bottom-color: #444;
+  }
+
+  .setting-label {
+    color: #ccc;
+  }
+
+  .setting-description {
+    color: #999;
+  }
+
+  .toggle-button {
+    background: #444;
+    color: #e0e0e0;
+  }
+
+  .toggle-button:hover {
+    background: #555;
+  }
+
+  input[type="range"] {
+    background: #444;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .settings-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+
+  .settings-panel {
+    padding: 15px;
+  }
+
+  #settings-toggle-button {
+    top: 10px;
+    right: 10px;
+    width: 45px;
+    height: 45px;
+    font-size: 1.3em;
+  }
+}
+
+/* アクセシビリティ：フォーカス表示の強化 */
+.setting-item:focus-within {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 動きを減らすモード */
+.reduced-motion .settings-panel {
+  animation: none !important;
+  transition: none !important;
+}
+
+.reduced-motion #settings-toggle-button:hover {
+  transform: scale(1.05) !important;
+}

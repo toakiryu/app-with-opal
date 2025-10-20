@@ -6,9 +6,11 @@
 const DEV_HOSTS = ["localhost", "127.0.0.1"];
 const IS_DEV = DEV_HOSTS.includes(self.location.hostname);
 
-const VERSION = "r20251020.5";
+const VERSION = "1.0.0-r202510201";
 
 const CACHE_NAME = `blackjack-pwa-${VERSION}${IS_DEV ? "-dev" : ""}`;
+
+console.log(`[SW] Service Worker initializing. Version: ${VERSION}, IS_DEV: ${IS_DEV}`);
 
 // In dev, avoid precache to prevent cache getting in the way during iteration
 const urlsToCache = IS_DEV
@@ -16,11 +18,30 @@ const urlsToCache = IS_DEV
   : [
       "./index.html",
       "./manifest.json",
+      // Audio files
+      "./assets/audio/bust.mp3",
+      "./assets/audio/card-flip.mp3",
+      "./assets/audio/card-one-flip.mp3",
+      "./assets/audio/chip.mp3",
+      "./assets/audio/lose.mp3",
+      "./assets/audio/stand.mp3",
+      "./assets/audio/win.mp3",
+      // CSS files
+      "./assets/css/effects.css",
+      "./assets/css/settings-modal.css",
+      "./assets/css/settings.css",
       "./assets/css/style.css",
-      "./assets/js/script.js",
+      // JavaScript files
+      "./assets/js/data-management.js",
       "./assets/js/game.js",
+      "./assets/js/guide.js",
       "./assets/js/i18n.js",
+      "./assets/js/modal.js",
       "./assets/js/score-manager.js",
+      "./assets/js/script.js",
+      "./assets/js/settings-sfx.js",
+      "./assets/js/sfx.js",
+      // External resources to cache
       "https://cdn.tailwindcss.com",
       "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap",
     ];
@@ -40,7 +61,7 @@ self.addEventListener("install", (event) => {
         })
         .catch((error) => {
           console.error("[SW] Failed to cache resources:", error);
-        }),
+        })
     );
   }
   self.skipWaiting();
@@ -56,9 +77,9 @@ self.addEventListener("activate", (event) => {
             console.log("[SW] Deleting old cache:", cacheName);
             return caches.delete(cacheName);
           }
-        }),
+        })
       );
-    }),
+    })
   );
   self.clients.claim();
 });
@@ -102,7 +123,7 @@ self.addEventListener("fetch", (event) => {
             headers: new Headers({ "Content-Type": "text/plain" }),
           });
         });
-      }),
+      })
   );
 });
 

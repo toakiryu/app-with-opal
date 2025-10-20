@@ -89,6 +89,15 @@
     <link rel="stylesheet" href="assets/css/effects.css" />
     <link rel="stylesheet" href="assets/css/settings.css" />
     <link rel="stylesheet" href="assets/css/settings-modal.css" />
+    
+    <!-- QRコードライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- https://app.unpkg.com/html5-qrcode -->
+    <!-- <script src="https://unpkg.com/html5-qrcode@2.0.0/minified/html5-qrcode.min.js"></script> -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.3/html5-qrcode.min.js"></script>
+    <!-- データ圧縮ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    
     <script
       data-name="BMC-Widget"
       data-cfasync="false"
@@ -110,20 +119,32 @@
 
     <!-- Menu Dropdown -->
     <div id="menu-dropdown" class="menu-dropdown hidden">
+      <button class="menu-item" id="menu-about" aria-label="概要">
+        <span class="menu-icon">ℹ️</span>
+        <span class="menu-label">概要</span>
+      </button>
       <button class="menu-item" id="menu-help" aria-label="ヘルプ">
         <span class="menu-icon">❓</span>
         <span class="menu-label" data-i18n="help.title">ヘルプ</span>
       </button>
+      <button class="menu-item" id="menu-data-management" aria-label="統計管理">
+        <span class="menu-icon">💾</span>
+        <span class="menu-label">統計管理</span>
+      </button>
       <button class="menu-item" id="menu-settings" aria-label="設定">
         <span class="menu-icon">⚙️</span>
         <span class="menu-label">設定</span>
+      </button>
+      <button class="menu-item" id="menu-share" aria-label="共有">
+        <span class="menu-icon">🔗</span>
+        <span class="menu-label">共有</span>
       </button>
     </div>
 
     <!-- GitHub Corner -->
     <a
       href="https://github.com/toakiryu/app-with-opal"
-      class="github-corner"
+      class="github-corner immersive-hide"
       aria-label="View source on GitHub"
     >
       <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
@@ -361,7 +382,7 @@
 
       <!-- Footer -->
       <footer
-        class="bg-gradient-to-b from-[#0f1419] to-[#000000] text-gray-300 py-8 px-4 border-t border-[#d4af37]/20"
+        class="immersive-hide bg-gradient-to-b from-[#0f1419] to-[#000000] text-gray-300 py-8 px-4 border-t border-[#d4af37]/20"
       >
         <div class="max-w-6xl mx-auto">
           <div
@@ -583,11 +604,11 @@
         <div class="flex justify-end mb-2">
           <button
             id="help-start-tutorial"
-            class="btn-primary"
+            class="px-4 py-2 bg-gradient-to-r from-[#d4af37] to-[#b8941f] text-[#1a2332] rounded-lg font-bold hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all active:scale-95"
             data-i18n="help.btn.startTutorial"
-            title="Start Tutorial Again"
+            title="チュートリアルをもう一度見る"
           >
-            Start Tutorial Again
+            🎓 チュートリアルをもう一度見る
           </button>
         </div>
         <div class="mt-2 text-sm text-gray-300">
@@ -606,45 +627,6 @@
           <p data-i18n="help.sections.faq.desc"></p>
           <h3 data-i18n="help.sections.glossary.title">5. 用語集</h3>
           <p data-i18n="help.sections.glossary.desc"></p>
-
-          <hr class="my-4 border-[#d4af37]/20" />
-          <h3 data-i18n="help.settings.title">ガイド設定</h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
-            <label class="flex items-center gap-2">
-              <input type="checkbox" id="setting-show-tooltips" />
-              <span data-i18n="help.settings.showTooltips"></span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="checkbox" id="setting-show-context" />
-              <span data-i18n="help.settings.showContextHelp"></span>
-            </label>
-            <label class="flex items-center gap-2">
-              <span data-i18n="help.settings.hintLevel"></span>
-              <select
-                id="setting-hint-level"
-                class="bg-[#1a2332] text-[#f0d678] px-2 py-1 rounded border border-[#d4af37]/40"
-              >
-                <option
-                  value="beginner"
-                  data-i18n="help.settings.hintLevel.beginner"
-                >
-                  Beginner
-                </option>
-                <option
-                  value="intermediate"
-                  data-i18n="help.settings.hintLevel.intermediate"
-                >
-                  Intermediate
-                </option>
-                <option
-                  value="expert"
-                  data-i18n="help.settings.hintLevel.expert"
-                >
-                  Expert
-                </option>
-              </select>
-            </label>
-          </div>
         </div>
       </div>
     </div>
@@ -837,7 +819,9 @@
 
         <!-- サウンド設定 -->
         <div class="mb-6">
-          <h3 class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2">
+          <h3
+            class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2"
+          >
             🔊 サウンド設定
           </h3>
 
@@ -858,7 +842,11 @@
             <div>
               <div class="flex justify-between items-center mb-2">
                 <span class="text-gray-300 text-sm">効果音の音量</span>
-                <span id="sound-volume-value" class="text-[#d4af37] font-bold text-sm">80%</span>
+                <span
+                  id="sound-volume-value"
+                  class="text-[#d4af37] font-bold text-sm"
+                  >80%</span
+                >
               </div>
               <input
                 type="range"
@@ -887,7 +875,11 @@
             <div>
               <div class="flex justify-between items-center mb-2">
                 <span class="text-gray-300 text-sm">BGMの音量</span>
-                <span id="music-volume-value" class="text-[#d4af37] font-bold text-sm">50%</span>
+                <span
+                  id="music-volume-value"
+                  class="text-[#d4af37] font-bold text-sm"
+                  >50%</span
+                >
               </div>
               <input
                 type="range"
@@ -903,8 +895,10 @@
         </div>
 
         <!-- 表示設定 -->
-        <div>
-          <h3 class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2">
+        <div class="mb-6">
+          <h3
+            class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2"
+          >
             🎨 表示設定
           </h3>
 
@@ -925,10 +919,619 @@
                 アニメーションを最小限に抑えます
               </p>
             </div>
+
+            <!-- プレイ体験を損なう要素を隠す -->
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-300">没入モード</span>
+                <button
+                  id="immersive-mode"
+                  class="setting-toggle-btn"
+                  aria-pressed="false"
+                >
+                  <span class="toggle-icon">🎮</span>
+                </button>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                GitHub、寄付ウィジェット、フッターなどを非表示にします
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ガイド設定 -->
+        <div>
+          <h3
+            class="text-xl font-bold text-[#f0d678] mb-4 border-b-2 border-[#d4af37]/30 pb-2"
+          >
+            📚 ガイド設定
+          </h3>
+
+          <div class="space-y-4">
+            <!-- ツールチップ表示 -->
+            <div>
+              <div class="flex justify-between items-center">
+                <span
+                  class="text-gray-300"
+                  data-i18n="help.settings.showTooltips"
+                  >ツールチップを表示</span
+                >
+                <button
+                  id="setting-show-tooltips"
+                  class="setting-toggle-btn"
+                  aria-pressed="true"
+                >
+                  <span class="toggle-icon">💬</span>
+                </button>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                ボタンにカーソルを合わせたときにヒントを表示します
+              </p>
+            </div>
+
+            <!-- コンテキストヘルプ表示 -->
+            <div>
+              <div class="flex justify-between items-center">
+                <span
+                  class="text-gray-300"
+                  data-i18n="help.settings.showContextHelp"
+                  >コンテキストヘルプを表示</span
+                >
+                <button
+                  id="setting-show-context"
+                  class="setting-toggle-btn"
+                  aria-pressed="true"
+                >
+                  <span class="toggle-icon">💡</span>
+                </button>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                状況に応じたアドバイスを表示します
+              </p>
+            </div>
+
+            <!-- ヒントレベル -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-gray-300" data-i18n="help.settings.hintLevel"
+                  >難易度</span
+                >
+                <select
+                  id="setting-hint-level"
+                  class="bg-[#1a2332] text-[#f0d678] px-3 py-2 rounded-lg border border-[#d4af37]/40 hover:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37] transition-all cursor-pointer"
+                >
+                  <option
+                    value="beginner"
+                    data-i18n="help.settings.hintLevel.beginner"
+                  >
+                    初心者
+                  </option>
+                  <option
+                    value="intermediate"
+                    data-i18n="help.settings.hintLevel.intermediate"
+                  >
+                    中級者
+                  </option>
+                  <option
+                    value="expert"
+                    data-i18n="help.settings.hintLevel.expert"
+                  >
+                    上級者
+                  </option>
+                </select>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                表示されるヒントの詳しさを設定します
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- About Modal -->
+    <div
+      id="about-modal"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="about-modal-title"
+      data-overlay="true"
+      data-lock-scroll="true"
+      data-multi="false"
+      tabindex="-1"
+    >
+      <div
+        class="modal-content bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-2xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h2 id="about-modal-title" class="text-3xl font-bold text-[#f0d678]">
+            ℹ️ アプリ情報
+          </h2>
+          <button
+            class="text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+            aria-label="閉じる"
+            title="閉じる"
+            tabindex="0"
+            onclick="if(window.ModalManager) window.ModalManager.close('about-modal');"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="space-y-6">
+          <!-- アプリ概要 -->
+          <div class="bg-[#0d5e3a]/30 rounded-2xl p-6">
+            <h3
+              class="text-xl font-bold text-[#f0d678] mb-3 flex items-center gap-2"
+            >
+              <span>🎴</span>
+              <span>Blackjack with Opal</span>
+            </h3>
+            <p class="text-gray-300 leading-relaxed">
+              スタイリッシュなブラックジャックWebアプリ。学園祭のカジノ体験のために開発されました。
+              カジノゲームのルールと戦略を練習できます。
+            </p>
+          </div>
+
+          <!-- バージョン情報 -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              📦 バージョン情報
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div class="bg-[#1a2332]/50 rounded-lg p-3">
+                <div class="text-gray-400 text-xs mb-1">アプリバージョン</div>
+                <div class="text-white font-bold" id="app-version">
+                  取得中...
+                </div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3">
+                <div class="text-gray-400 text-xs mb-1">Service Worker</div>
+                <div class="text-white font-bold" id="sw-version">
+                  取得中...
+                </div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3">
+                <div class="text-gray-400 text-xs mb-1">ビルド日</div>
+                <div class="text-white font-bold" id="build-date">
+                  取得中...
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center gap-2 text-xs">
+              <span
+                class="inline-block w-2 h-2 rounded-full"
+                id="sw-status-indicator"
+              ></span>
+              <span class="text-gray-400" id="sw-status-text"
+                >Service Worker: 確認中...</span
+              >
+            </div>
+          </div>
+
+          <!-- 開発情報 -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              👨‍💻 開発情報
+            </h3>
+            <div class="space-y-2 text-gray-300 text-sm">
+              <div class="flex items-start gap-2">
+                <span class="text-[#d4af37]">•</span>
+                <div>
+                  <span class="font-semibold">開発者:</span> Toa Kiryu (<a
+                    href="https://github.com/toakiryu"
+                    target="_blank"
+                    class="text-[#d4af37] hover:text-[#f0d678] underline"
+                    >@toakiryu</a
+                  >)
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-[#d4af37]">•</span>
+                <div>
+                  <span class="font-semibold">AI開発:</span>
+                  このプロジェクトは主にAIによって開発されました
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-[#d4af37]">•</span>
+                <div>
+                  <span class="font-semibold">Opal:</span>
+                  ゲーム構造、初期デザイン、基礎を作成
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-[#d4af37]">•</span>
+                <div>
+                  <span class="font-semibold">GitHub Copilot:</span>
+                  機能の拡張、改善、洗練
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 技術スタック -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              🛠️ 技術スタック
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div class="bg-[#1a2332]/50 rounded-lg p-3 text-center">
+                <div class="text-2xl mb-1">📄</div>
+                <div class="text-white text-sm font-semibold">HTML5</div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3 text-center">
+                <div class="text-2xl mb-1">🎨</div>
+                <div class="text-white text-sm font-semibold">CSS3</div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3 text-center">
+                <div class="text-2xl mb-1">⚡</div>
+                <div class="text-white text-sm font-semibold">Vanilla JS</div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3 text-center">
+                <div class="text-2xl mb-1">🎐</div>
+                <div class="text-white text-sm font-semibold">Tailwind CSS</div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3 text-center">
+                <div class="text-2xl mb-1">📱</div>
+                <div class="text-white text-sm font-semibold">PWA</div>
+              </div>
+              <div class="bg-[#1a2332]/50 rounded-lg p-3 text-center">
+                <div class="text-2xl mb-1">🌐</div>
+                <div class="text-white text-sm font-semibold">i18n</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 機能一覧 -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              ✨ 主な機能
+            </h3>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300 text-sm"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>標準的なブラックジャックルール</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>ダブルダウン・スプリット対応</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>スコアトラッキング</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>チュートリアル・ガイド機能</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>効果音・BGM対応</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>多言語対応（日本語・英語）</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>PWA対応（オフライン動作）</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[#d4af37]">✓</span>
+                <span>レスポンシブデザイン</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- リンク -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              🔗 リンク
+            </h3>
+            <div class="space-y-2">
+              <a
+                href="https://github.com/toakiryu/app-with-opal"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 bg-[#1a2332]/50 rounded-lg p-3 hover:bg-[#1a2332]/70 transition-all"
+              >
+                <span class="text-2xl">📂</span>
+                <div>
+                  <div class="text-white font-semibold">GitHub Repository</div>
+                  <div class="text-gray-400 text-xs">ソースコードを見る</div>
+                </div>
+              </a>
+              <a
+                href="https://opal.withgoogle.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 bg-[#1a2332]/50 rounded-lg p-3 hover:bg-[#1a2332]/70 transition-all"
+              >
+                <span class="text-2xl">🤖</span>
+                <div>
+                  <div class="text-white font-semibold">Opal Project</div>
+                  <div class="text-gray-400 text-xs">AI開発ツールについて</div>
+                </div>
+              </a>
+              <a
+                href="https://app-with-opal.toaki.cc/apps/blackjack"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 bg-[#1a2332]/50 rounded-lg p-3 hover:bg-[#1a2332]/70 transition-all"
+              >
+                <span class="text-2xl">🌐</span>
+                <div>
+                  <div class="text-white font-semibold">Demo Site</div>
+                  <div class="text-gray-400 text-xs">デモサイトにアクセス</div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- ライセンス -->
+          <div
+            class="bg-[#0d5e3a]/20 rounded-lg p-4 border border-[#d4af37]/20"
+          >
+            <div class="text-center text-gray-400 text-sm">
+              © 2025 Toa Kiryu. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Management Modal -->
+    <div
+      id="data-management-modal"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="data-management-modal-title"
+      data-overlay="true"
+      data-lock-scroll="true"
+      data-multi="false"
+      tabindex="-1"
+    >
+      <div
+        class="modal-content bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-xl w-full max-h-[90vh] mx-4 border-4 border-[#d4af37]/30 overflow-y-auto scrollbar-gold"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h2
+            id="data-management-modal-title"
+            class="text-3xl font-bold text-[#f0d678]"
+          >
+            💾 統計管理
+          </h2>
+          <button
+            class="text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+            aria-label="閉じる"
+            title="閉じる"
+            tabindex="0"
+            onclick="if(window.ModalManager) window.ModalManager.close('data-management-modal');"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="space-y-6">
+          <!-- 現在の統計情報 -->
+          <div class="bg-[#0d5e3a]/30 rounded-2xl p-6">
+            <h3 class="text-xl font-bold text-[#f0d678] mb-4">📊 現在の統計</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-gray-400 text-xs mb-1">最高記録</div>
+                <div
+                  class="text-2xl font-bold text-[#d4af37]"
+                  id="data-mgmt-best-score"
+                >
+                  0
+                </div>
+              </div>
+              <div>
+                <div class="text-gray-400 text-xs mb-1">総ゲーム数</div>
+                <div
+                  class="text-2xl font-bold text-white"
+                  id="data-mgmt-total-games"
+                >
+                  0
+                </div>
+              </div>
+              <div>
+                <div class="text-gray-400 text-xs mb-1">総試合数</div>
+                <div
+                  class="text-2xl font-bold text-white"
+                  id="data-mgmt-total-matches"
+                >
+                  0
+                </div>
+              </div>
+              <div>
+                <div class="text-gray-400 text-xs mb-1">データサイズ</div>
+                <div
+                  class="text-sm font-bold text-gray-300"
+                  id="data-mgmt-size"
+                >
+                  計算中...
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- エクスポート -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              📤 データのエクスポート
+            </h3>
+            <p class="text-gray-300 text-sm mb-3">
+              現在の統計データをJSONファイルとしてダウンロードします。
+            </p>
+            <button
+              id="export-data-btn"
+              class="w-full bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(30,64,175,0.5)] transition-all flex items-center justify-center gap-2"
+            >
+              <span>📥</span>
+              <span>データをエクスポート</span>
+            </button>
+          </div>
+
+          <!-- インポート -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              📥 データのインポート
+            </h3>
+            <p class="text-gray-300 text-sm mb-3">
+              以前エクスポートしたJSONファイルから統計データを復元します。
+            </p>
+            <input
+              type="file"
+              id="import-data-input"
+              accept=".json"
+              class="hidden"
+            />
+            <button
+              id="import-data-btn"
+              class="w-full bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(22,163,74,0.5)] transition-all flex items-center justify-center gap-2"
+            >
+              <span>📤</span>
+              <span>データをインポート</span>
+            </button>
+          </div>
+
+          <!-- リセット -->
+          <div>
+            <h3
+              class="text-lg font-bold text-[#f0d678] mb-3 border-b border-[#d4af37]/30 pb-2"
+            >
+              🗑️ データのリセット
+            </h3>
+            <p class="text-gray-300 text-sm mb-3">
+              すべての統計データを削除します。この操作は取り消せません。
+            </p>
+            <button
+              id="reset-data-btn"
+              class="w-full bg-gradient-to-r from-[#c41e3a] to-[#a01828] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(196,30,58,0.5)] transition-all flex items-center justify-center gap-2"
+            >
+              <span>⚠️</span>
+              <span>すべてのデータをリセット</span>
+            </button>
+          </div>
+
+          <!-- 警告 -->
+          <div
+            class="bg-[#c41e3a]/10 border border-[#c41e3a]/30 rounded-lg p-4"
+          >
+            <div class="flex items-start gap-3">
+              <span class="text-2xl">⚠️</span>
+              <div class="text-sm text-gray-300">
+                <div class="font-bold text-[#f0d678] mb-1">重要な注意事項</div>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>リセットは取り消せません</li>
+                  <li>インポートは現在のデータを上書きします</li>
+                  <li>定期的なエクスポートを推奨します</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QRコード共有モーダル -->
+    <div
+      id="share-modal"
+      class="modal fixed inset-0 z-50 flex justify-center items-center hidden"
+      data-overlay="true"
+      data-lock-scroll="true"
+      tabindex="-1"
+    >
+      <div
+        class="modal-content relative bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-5 md:p-8 max-w-md w-full max-h-[90vh] mx-4 border-4 border-[#d4af37]/30 overflow-y-auto scrollbar-gold"
+      >
+        <button
+          class="close-btn absolute top-4 right-4 text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+          aria-label="閉じる"
+          title="閉じる"
+          tabindex="0"
+          onclick="if(window.ModalManager) window.ModalManager.close('share-modal');"
+        >
+          ×
+        </button>
+        <h2 class="text-3xl font-bold text-[#f0d678] mb-4">データ共有</h2>
+        <div class="mb-6 w-full flex flex-col items-center">
+          <button
+            id="share-export-btn"
+            class="w-full bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(30,64,175,0.5)] transition-all flex items-center justify-center gap-2 mb-4"
+          >
+            <span>📤</span><span>データをQRコードで共有</span>
+          </button>
+          <div id="share-qrcode" class="my-4"></div>
+          
+          <!-- インポート方法選択 -->
+          <div class="w-full mb-4">
+            <h3 class="text-lg font-bold text-[#f0d678] mb-3">📥 インポート方法</h3>
+            <div class="flex gap-2">
+              <button
+                id="share-import-camera-btn"
+                class="flex-1 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(22,163,74,0.5)] transition-all flex items-center justify-center gap-2"
+              >
+                <span>📷</span><span>カメラ</span>
+              </button>
+              <button
+                id="share-import-file-btn"
+                class="flex-1 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(22,163,74,0.5)] transition-all flex items-center justify-center gap-2"
+              >
+                <span>📁</span><span>ファイル</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- カメラプレビュー領域 -->
+          <div id="share-camera-container" class="w-full mb-4 hidden">
+            <div id="share-camera-reader" class="w-full"></div>
+            <button
+              id="share-camera-stop-btn"
+              class="w-full mt-2 bg-gray-500 text-white py-2 rounded-lg font-bold hover:bg-gray-600 transition-all"
+            >
+              カメラを停止
+            </button>
+          </div>
+          
+          <input
+            type="file"
+            id="share-import-file"
+            accept="image/*"
+            class="hidden"
+          />
+        </div>
+        <div id="share-status" class="text-sm text-gray-300 mt-2"></div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.ModalManager) {
+          ModalManager.register("share-modal");
+        }
+      });
+    </script>
 
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/sfx.js"></script>
@@ -986,12 +1589,42 @@
           });
         }
 
+        // メニュー - 概要
+        const menuAbout = document.getElementById("menu-about");
+        if (menuAbout) {
+          menuAbout.addEventListener("click", () => {
+            // 概要モーダルを開く
+            if (window.ModalManager) {
+              window.ModalManager.open("about-modal");
+            }
+            menuDropdown.classList.add("hidden");
+          });
+        }
+
         // メニュー - ヘルプ
         if (menuHelp) {
           menuHelp.addEventListener("click", () => {
             // ヘルプモーダルを直接開く
             if (window.ModalManager) {
               window.ModalManager.open("help-modal");
+            }
+            menuDropdown.classList.add("hidden");
+          });
+        }
+
+        // メニュー - 統計管理
+        const menuDataManagement = document.getElementById(
+          "menu-data-management"
+        );
+        if (menuDataManagement) {
+          menuDataManagement.addEventListener("click", () => {
+            // 統計管理モーダルを開く
+            if (window.ModalManager) {
+              window.ModalManager.open("data-management-modal");
+            }
+            // 統計情報を更新
+            if (window.DataManagement) {
+              window.DataManagement.updateStats();
             }
             menuDropdown.classList.add("hidden");
           });
@@ -1004,9 +1637,24 @@
             if (window.ModalManager) {
               window.ModalManager.open("settings-modal");
             }
-            // UIを更新
+            // サウンドUIを更新
             if (window.SettingsUI) {
               window.SettingsUI.updateUI();
+            }
+            // ガイドUIを更新
+            if (window.guide) {
+              window.guide.applySettingsToUI();
+            }
+            menuDropdown.classList.add("hidden");
+          });
+        }
+
+        // メニュー - 共有
+        const menuShare = document.getElementById("menu-share");
+        if (menuShare) {
+          menuShare.addEventListener("click", () => {
+            if (window.ModalManager) {
+              window.ModalManager.open("share-modal");
             }
             menuDropdown.classList.add("hidden");
           });
@@ -1017,6 +1665,8 @@
     <script src="assets/js/script.js"></script>
 
     <script src="assets/js/modal.js"></script>
+    <script src="assets/js/data-management.js"></script>
+    <script src="assets/js/qr-share.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         if (window.ModalManager) {
@@ -1024,6 +1674,123 @@
           ModalManager.register("bankruptcy-modal");
           ModalManager.register("scoreboard-modal");
           ModalManager.register("settings-modal");
+          ModalManager.register("about-modal");
+          ModalManager.register("data-management-modal");
+        }
+
+        // バージョン情報を更新
+        const appVersionEl = document.getElementById("app-version");
+        const swVersionEl = document.getElementById("sw-version");
+        const swStatusIndicator = document.getElementById(
+          "sw-status-indicator"
+        );
+        const swStatusText = document.getElementById("sw-status-text");
+        const buildDateEl = document.getElementById("build-date");
+
+        if (appVersionEl) {
+          // manifest.jsonからバージョンを取得する場合
+          fetch("./manifest.json")
+            .then((res) => res.json())
+            .then((manifest) => {
+              if (manifest.version) {
+                appVersionEl.textContent = `v${manifest.version}`;
+              }
+            })
+            .catch(() => {
+              // フォールバック
+              appVersionEl.textContent = "v1.0.0";
+            });
+        }
+
+        // // Service Workerのバージョンを取得
+        if (swVersionEl && "serviceWorker" in navigator) {
+          // Service Worker のスクリプトを取得してバージョンを抽出
+          fetch("./service-worker.js")
+            .then((res) => res.text())
+            .then((scriptContent) => {
+              // VERSIONの値を正規表現で抽出
+              const versionMatch = scriptContent.match(
+                /const VERSION = ["']([^"']+)["']/
+              );
+              if (versionMatch && versionMatch[1]) {
+                swVersionEl.textContent = `v${versionMatch[1]}`;
+              } else {
+                swVersionEl.textContent = "不明";
+              }
+            })
+            .catch(() => {
+              swVersionEl.textContent = "取得失敗";
+            });
+
+          // Service Workerの状態をチェック
+          navigator.serviceWorker.ready
+            .then((registration) => {
+              if (registration.active) {
+                if (swStatusIndicator) {
+                  swStatusIndicator.className =
+                    "inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse";
+                }
+                if (swStatusText) {
+                  swStatusText.textContent = "Service Worker: アクティブ";
+                  swStatusText.className = "text-green-400";
+                }
+              }
+            })
+            .catch(() => {
+              if (swStatusIndicator) {
+                swStatusIndicator.className =
+                  "inline-block w-2 h-2 rounded-full bg-red-500";
+              }
+              if (swStatusText) {
+                swStatusText.textContent = "Service Worker: 非アクティブ";
+                swStatusText.className = "text-red-400";
+              }
+            });
+        } else if (swVersionEl) {
+          swVersionEl.textContent = "未対応";
+          if (swStatusIndicator) {
+            swStatusIndicator.className =
+              "inline-block w-2 h-2 rounded-full bg-gray-500";
+          }
+          if (swStatusText) {
+            swStatusText.textContent = "Service Worker: 未対応";
+            swStatusText.className = "text-gray-400";
+          }
+        }
+
+        if (buildDateEl) {
+          // Service Workerのバージョン文字列からビルド日を抽出
+          fetch("./service-worker.js")
+            .then((res) => res.text())
+            .then((scriptContent) => {
+              const versionMatch = scriptContent.match(
+                /const VERSION = ["']([^"']+)["']/
+              );
+              if (versionMatch && versionMatch[1]) {
+                // バージョン形式: "1.0.0-r202510201" からビルド日を抽出
+                const buildMatch = versionMatch[1].match(
+                  /r(\d{4})(\d{2})(\d{2})/
+                );
+                if (buildMatch) {
+                  buildDateEl.textContent = `${buildMatch[1]}/${buildMatch[2]}/${buildMatch[3]}`;
+                  return;
+                }
+              }
+              // フォールバック: 現在の日付を表示
+              const now = new Date();
+              const year = now.getFullYear();
+              const month = String(now.getMonth() + 1).padStart(2, "0");
+              const day = String(now.getDate()).padStart(2, "0");
+              buildDateEl.textContent = `${year}/${month}/${day}`;
+            })
+            .catch(() => {
+              // エラー時も現在日付を表示
+              const now = new Date();
+              const year = now.getFullYear();
+              const month = String(now.getMonth() + 1).padStart(2, "0");
+              const day = String(now.getDate()).padStart(2, "0");
+              buildDateEl.textContent = `${year}/${month}/${day}`;
+            });
         }
       });
     </script>

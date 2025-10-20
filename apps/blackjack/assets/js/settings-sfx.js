@@ -75,6 +75,16 @@ class SettingsUI {
         this.showFeedback(enabled ? 'アニメーションを減らしました' : 'アニメーションを有効にしました');
       });
     }
+
+    // 没入モード
+    const immersiveModeToggle = document.getElementById('immersive-mode');
+    if (immersiveModeToggle) {
+      immersiveModeToggle.addEventListener('click', () => {
+        const enabled = this.sfx.toggleImmersiveMode();
+        this.updateToggleButton(immersiveModeToggle, enabled, '🎮', '🎮');
+        this.showFeedback(enabled ? '没入モードをONにしました' : '没入モードをOFFにしました');
+      });
+    }
   }
 
   /**
@@ -117,6 +127,12 @@ class SettingsUI {
     const reducedMotionToggle = document.getElementById('reduced-motion');
     if (reducedMotionToggle) {
       this.updateToggleButton(reducedMotionToggle, settings.reducedMotion, '⏸️', '🎬');
+    }
+
+    // 没入モード
+    const immersiveModeToggle = document.getElementById('immersive-mode');
+    if (immersiveModeToggle) {
+      this.updateToggleButton(immersiveModeToggle, settings.immersiveMode, '🎮', '🎮');
     }
   }
 

@@ -1,6 +1,7 @@
 {
   "name": "Blackjack with Opal",
   "short_name": "Blackjack",
+  "version": "1.0.0",
   "description": "A stylish Blackjack web app created with Opal",
   "start_url": "./",
   "display": "standalone",

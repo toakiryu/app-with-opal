@@ -599,3 +599,20 @@ body.no-scroll {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
+
+/* ========================================
+   Immersive Mode (没入モード)
+   ======================================== */
+body.immersive-mode .immersive-hide {
+  display: none !important;
+}
+
+/* Buy Me a Coffee ウィジェットを隠す */
+body.immersive-mode [id="bmc-wbtn"],
+body.immersive-mode iframe[src*="buymeacoffee"],
+body.immersive-mode .bmc-btn-container {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

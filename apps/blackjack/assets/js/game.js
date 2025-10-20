@@ -96,34 +96,73 @@ function createCardElement(card, isHidden = false) {
 }
 
 function renderHands() {
-  dealerHandEl.innerHTML = "";
+  // ディーラーの手札を描画（既存のカードは保持、新しいカードのみ追加）
+  const currentDealerCards = dealerHandEl.children.length;
+  const isInitialDeal = currentDealerCards === 0; // 初期配布かどうか
+  
   dealerHand.forEach((card, index) => {
-    const isHidden =
-      index === 1 && gameState !== "HAND_OVER" && gameState !== "DEALER_TURN";
-    const cardEl = createCardElement(card, isHidden);
-    cardEl.style.animationDelay = `${index * 100}ms`;
-    cardEl.classList.add("deal-in");
-    dealerHandEl.appendChild(cardEl);
+    if (index < currentDealerCards) {
+      // 既存のカードを更新（裏向き→表向きの切り替えなど）
+      const existingCard = dealerHandEl.children[index];
+      const isHidden =
+        index === 1 && gameState !== "HAND_OVER" && gameState !== "DEALER_TURN";
+      
+      // カードが裏向きから表向きに変わる場合のみ更新
+      if (isHidden !== existingCard.classList.contains("flipped")) {
+        const cardEl = createCardElement(card, isHidden);
+        dealerHandEl.replaceChild(cardEl, existingCard);
+      }
+    } else {
+      // 新しいカードを追加
+      const isHidden =
+        index === 1 && gameState !== "HAND_OVER" && gameState !== "DEALER_TURN";
+      const cardEl = createCardElement(card, isHidden);
+      
+      // 初期配布時は順次アニメーション、追加時は即座に表示
+      if (isInitialDeal) {
+        cardEl.style.animationDelay = `${index * 100}ms`;
+      } else {
+        cardEl.style.animationDelay = "0ms";
+      }
+      
+      cardEl.classList.add("deal-in");
+      dealerHandEl.appendChild(cardEl);
+    }
   });
 
-  mainPlayerHandEl.innerHTML = "";
+  // プレイヤーのメインハンドを描画（既存のカードは保持、新しいカードのみ追加）
   if (playerHands[0]) {
+    const currentMainCards = mainPlayerHandEl.children.length;
     playerHands[0].forEach((card, index) => {
-      const cardEl = createCardElement(card);
-      cardEl.style.animationDelay = `${index * 100 + 50}ms`;
-      cardEl.classList.add("deal-in");
-      mainPlayerHandEl.appendChild(cardEl);
+      if (index >= currentMainCards) {
+        // 新しいカードのみ追加
+        const cardEl = createCardElement(card);
+        
+        // 初期配布時は順次アニメーション、追加時は即座に表示
+        if (isInitialDeal) {
+          cardEl.style.animationDelay = `${index * 100 + 50}ms`;
+        } else {
+          cardEl.style.animationDelay = "0ms";
+        }
+        
+        cardEl.classList.add("deal-in");
+        mainPlayerHandEl.appendChild(cardEl);
+      }
     });
   }
 
+  // スプリットハンドを描画
   if (playerHands.length > 1) {
     splitPlayerHandEl.classList.remove("hidden");
-    splitPlayerHandEl.innerHTML = "";
+    const currentSplitCards = splitPlayerHandEl.children.length;
     playerHands[1].forEach((card, index) => {
-      const cardEl = createCardElement(card);
-      cardEl.style.animationDelay = `${index * 100 + 50}ms`;
-      cardEl.classList.add("deal-in");
-      splitPlayerHandEl.appendChild(cardEl);
+      if (index >= currentSplitCards) {
+        // 新しいカードのみ追加
+        const cardEl = createCardElement(card);
+        cardEl.style.animationDelay = "0ms";
+        cardEl.classList.add("deal-in");
+        splitPlayerHandEl.appendChild(cardEl);
+      }
     });
   } else {
     splitPlayerHandEl.classList.add("hidden");
@@ -276,6 +315,12 @@ function startHand() {
     displayMessage(shufflingMsg, false, 1500);
   }
 
+  // 新しいハンドの開始時には既存のカードをクリア
+  dealerHandEl.innerHTML = "";
+  mainPlayerHandEl.innerHTML = "";
+  splitPlayerHandEl.innerHTML = "";
+  splitPlayerHandEl.classList.add("hidden");
+
   playerHands = [[deck.pop(), deck.pop()]];
   dealerHand = [deck.pop(), deck.pop()];
   activeHandIndex = 0;
@@ -411,6 +456,10 @@ function dealerPlay() {
 
     if (shouldHit) {
       dealerHand.push(deck.pop());
+      // 効果音を再生
+      if (window.Sfx) {
+        window.Sfx.playSound("card-flip");
+      }
       renderHands();
       updateScores();
     } else {

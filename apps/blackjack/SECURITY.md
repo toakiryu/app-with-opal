@@ -346,7 +346,7 @@ ScoreManager.debug.validateData(data);
 
 ```javascript
 // 開発者ツールのコンソールで実行
-localStorage.setItem("blackjack_score_data", "invalid_data");
+localStorage.setItem("blackjack_scores", "invalid_data");
 // ページをリロード → データリセットされるべき
 ```
 

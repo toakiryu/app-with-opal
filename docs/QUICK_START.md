@@ -84,6 +84,7 @@ git push origin add-my-app
 4. "Create pull request" をクリック
 
 Steps:
+
 1. Visit your forked repository on GitHub
 2. Click "Compare & pull request"
 3. Describe your changes
@@ -104,6 +105,7 @@ cd apps/my-new-app
 ## ヒント / Tips
 
 ✅ **推奨 / Recommended:**
+
 - わかりやすいアプリ名を使用
 - スクリーンショットを含める
 - 使用方法を詳しく説明
@@ -112,6 +114,7 @@ cd apps/my-new-app
 Use descriptive app names, include screenshots, explain usage in detail, add code comments
 
 ❌ **避けるべき / Avoid:**
+
 - 他のアプリのファイルを変更
 - 大きなファイル（動画など）をコミット
 - 個人情報やAPIキーを含める

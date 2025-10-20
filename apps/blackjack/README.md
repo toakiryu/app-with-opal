@@ -61,12 +61,14 @@ While Blackjack may appear simple at first glance, it is actually a deeply strat
 モバイルデバイスのホーム画面にアプリとして追加することで、ブラウザのUIなしでフルスクリーン体験ができます。
 
 **iOS (Safari)**
+
 1. Safariでアプリを開く
 2. 共有ボタン(□↑)をタップ
 3. 「ホーム画面に追加」を選択
 4. 「追加」をタップ
 
 **Android (Chrome)**
+
 1. Chromeでアプリを開く
 2. メニュー(⋮)を開く
 3. 「ホーム画面に追加」または「アプリをインストール」を選択

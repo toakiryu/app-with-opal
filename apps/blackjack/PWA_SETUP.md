@@ -19,6 +19,7 @@ Progressive Web App (PWA) は、ウェブアプリをネイティブアプリの
 4. ダウンロードしたアイコンを `assets/images/` フォルダに配置
 
 必要なアイコンサイズ:
+
 - 16×16, 32×32 (ファビコン)
 - 57×57, 60×60, 72×72, 76×76 (iOS旧バージョン)
 - 96×96, 114×114, 120×120 (iOS、Android)
@@ -44,6 +45,7 @@ apps/blackjack/
 ### 3. ローカルでのテスト
 
 PWAは以下の条件で動作します:
+
 - **HTTPS接続** または **localhost**
 - Service Workerの登録が成功
 
@@ -63,18 +65,21 @@ npx http-server -p 8000
 ### 4. モバイルへのインストール
 
 #### iOS (Safari)
+
 1. Safariでアプリを開く
 2. 共有ボタン(□↑)をタップ
 3. 「ホーム画面に追加」を選択
 4. アイコンと名前を確認して「追加」をタップ
 
 #### Android (Chrome)
+
 1. Chromeでアプリを開く
 2. メニュー(⋮)を開く
 3. 「ホーム画面に追加」または「アプリをインストール」を選択
 4. 「インストール」をタップ
 
 #### デスクトップ (Chrome/Edge)
+
 1. URLバーの右側に表示されるインストールアイコン(⊕)をクリック
 2. 「インストール」をクリック
 
@@ -88,10 +93,10 @@ npx http-server -p 8000
 {
   "name": "アプリの正式名称",
   "short_name": "短縮名(ホーム画面に表示)",
-  "theme_color": "#0d5e3a",        // テーマカラー
-  "background_color": "#0d5e3a",   // スプラッシュ画面の背景色
-  "display": "standalone",          // 表示モード
-  "orientation": "portrait"         // 画面の向き
+  "theme_color": "#0d5e3a", // テーマカラー
+  "background_color": "#0d5e3a", // スプラッシュ画面の背景色
+  "display": "standalone", // 表示モード
+  "orientation": "portrait" // 画面の向き
 }
 ```
 
@@ -113,15 +118,17 @@ npx http-server -p 8000
 `service-worker.js` のキャッシュ戦略を変更できます:
 
 #### Cache First (現在の設定)
+
 ```javascript
 // キャッシュを優先、なければネットワーク
-caches.match(event.request) || fetch(event.request)
+caches.match(event.request) || fetch(event.request);
 ```
 
 #### Network First
+
 ```javascript
 // ネットワークを優先、失敗したらキャッシュ
-fetch(event.request).catch(() => caches.match(event.request))
+fetch(event.request).catch(() => caches.match(event.request));
 ```
 
 ## 🧪 デバッグとテスト
@@ -140,8 +147,9 @@ fetch(event.request).catch(() => caches.match(event.request))
 Service Workerを更新した場合:
 
 1. `CACHE_NAME` のバージョン番号を変更
+
 ```javascript
-const CACHE_NAME = 'blackjack-pwa-v2';  // v1 → v2
+const CACHE_NAME = "blackjack-pwa-v2"; // v1 → v2
 ```
 
 2. ページをリロードすると新しいWorkerがインストールされる
@@ -149,16 +157,19 @@ const CACHE_NAME = 'blackjack-pwa-v2';  // v1 → v2
 ### トラブルシューティング
 
 #### Service Workerが登録されない
+
 - コンソールでエラーを確認
 - HTTPSまたはlocalhostで実行されているか確認
 - service-worker.jsのパスが正しいか確認
 
 #### アイコンが表示されない
+
 - アイコンファイルが正しい場所にあるか確認
 - manifest.jsonのパスが正しいか確認
 - キャッシュをクリアして再読み込み
 
 #### インストールボタンが表示されない
+
 - manifest.jsonが正しく設定されているか確認
 - すべての必須フィールドが入力されているか確認
 - アイコンが192×192と512×512のサイズで存在するか確認
@@ -190,6 +201,7 @@ const CACHE_NAME = 'blackjack-pwa-v2';  // v1 → v2
 ### その他のホスティング
 
 以下のサービスは自動的にHTTPSを提供します:
+
 - Netlify
 - Vercel
 - Firebase Hosting

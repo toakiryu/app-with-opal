@@ -7,11 +7,15 @@ const {
   shuffleDeck,
   getCardValue,
   calculateHandValue,
+  isSoftHand,
+  getHandInfo,
 } = window.Blackjack || {};
 
 if (!window.Blackjack) {
   // Fallback guard to help debugging if script order breaks
-  throw new Error("Blackjack core not found. Ensure script.js is loaded before game.js");
+  throw new Error(
+    "Blackjack core not found. Ensure script.js is loaded before game.js",
+  );
 }
 
 let deck = [];
@@ -34,7 +38,7 @@ const dealerScoreEl = document.getElementById("dealer-score");
 const playerScoreEl = document.getElementById("player-score");
 const dealerHandEl = document.getElementById("dealer-hand");
 const playerHandsContainerEl = document.getElementById(
-  "player-hands-container"
+  "player-hands-container",
 );
 const mainPlayerHandEl = document.getElementById("player-hand-main");
 const splitPlayerHandEl = document.getElementById("player-hand-split");
@@ -64,7 +68,7 @@ function createCardElement(card, isHidden = false) {
   cardEl.className = "card";
 
   const cardInner = document.createElement("div");
-  cardInner.className = "relative w-full h-full";
+  cardInner.className = "card-inner";
 
   if (isHidden) {
     cardEl.classList.add("flipped");
@@ -84,8 +88,9 @@ function createCardElement(card, isHidden = false) {
   const back = document.createElement("div");
   back.className = "card-face card-back";
 
-  cardEl.appendChild(front);
-  cardEl.appendChild(back);
+  cardInner.appendChild(front);
+  cardInner.appendChild(back);
+  cardEl.appendChild(cardInner);
 
   return cardEl;
 }
@@ -129,30 +134,44 @@ function renderHands() {
 }
 
 function updateScores() {
-  const dealerScore = calculateHandValue(dealerHand);
+  // ディーラースコア表示
   const isDealerHidden =
     gameState !== "HAND_OVER" && gameState !== "DEALER_TURN";
-  if (window.i18n) {
-    dealerScoreEl.textContent = window.i18n.t('score.dealer', {
-      score: isDealerHidden ? getCardValue(dealerHand[0]) : dealerScore,
-    });
+
+  if (isDealerHidden) {
+    // カードが隠れている場合
+    if (window.i18n) {
+      dealerScoreEl.textContent = window.i18n.t("score.dealer", { score: "?" });
+    } else {
+      dealerScoreEl.textContent = `Dealer: ?`;
+    }
   } else {
-    dealerScoreEl.textContent = `Dealer: ${
-      isDealerHidden ? getCardValue(dealerHand[0]) : dealerScore
-    }`;
+    // カードが見える場合：Soft/Hard表示を追加
+    const dealerInfo = getHandInfo(dealerHand);
+    if (window.i18n) {
+      dealerScoreEl.textContent = window.i18n.t("score.dealer", {
+        score: dealerInfo.label,
+      });
+    } else {
+      dealerScoreEl.textContent = `Dealer: ${dealerInfo.label}`;
+    }
   }
 
+  // プレイヤースコア表示
   if (playerHands.length === 1) {
-    const playerScore = calculateHandValue(playerHands[0]);
+    const playerInfo = getHandInfo(playerHands[0]);
     playerScoreEl.textContent = window.i18n
-      ? window.i18n.t('score.player', { score: playerScore })
-      : `Player: ${playerScore}`;
+      ? window.i18n.t("score.player", { score: playerInfo.label })
+      : `Player: ${playerInfo.label}`;
   } else {
-    const score1 = calculateHandValue(playerHands[0]);
-    const score2 = calculateHandValue(playerHands[1]);
+    const info1 = getHandInfo(playerHands[0]);
+    const info2 = getHandInfo(playerHands[1]);
     playerScoreEl.textContent = window.i18n
-      ? window.i18n.t('score.hand12', { score1, score2 })
-      : `Hand 1: ${score1} / Hand 2: ${score2}`;
+      ? window.i18n.t("score.hand12", {
+          score1: info1.label,
+          score2: info2.label,
+        })
+      : `Hand 1: ${info1.label} / Hand 2: ${info2.label}`;
   }
 }
 
@@ -191,6 +210,24 @@ function updateUI() {
       playerBalance >= currentBet
     );
   }
+
+  // コンテキストヒント更新イベントを通知
+  try {
+    window.dispatchEvent(
+      new CustomEvent("game:ui-updated", {
+        detail: {
+          state: gameState,
+          playerBalance,
+          currentBet,
+          activeHandIndex,
+          playerHands: JSON.parse(JSON.stringify(playerHands)),
+          dealerHand: JSON.parse(JSON.stringify(dealerHand)),
+        },
+      }),
+    );
+  } catch (e) {
+    /* noop */
+  }
 }
 
 function updateActiveHandIndicator() {
@@ -228,7 +265,9 @@ function startHand() {
   if (deck.length < NUM_DECKS * 52 * 0.25) {
     deck = createDeck();
     shuffleDeck(deck);
-    const shufflingMsg = window.i18n ? window.i18n.t('msg.shuffling') : "Shuffling new deck...";
+    const shufflingMsg = window.i18n
+      ? window.i18n.t("msg.shuffling")
+      : "Shuffling new deck...";
     displayMessage(shufflingMsg, false, 1500);
   }
 
@@ -242,15 +281,15 @@ function startHand() {
   const playerScore = calculateHandValue(playerHands[0]);
   const dealerScore = calculateHandValue(dealerHand);
 
-  if (playerScore === 21) {
-    if (dealerScore === 21) {
-      setTimeout(() => resolveHand("Push"), 1000);
-    } else {
-      setTimeout(() => resolveHand("Player Blackjack"), 1000);
-    }
-  } else {
-    displayMessage(window.i18n ? window.i18n.t('msg.yourTurn') : "Your Turn", false, 2000);
-  }
+  // ブラックジャック成立時も自動でスタンドせず、プレイヤーが操作できるようにする
+  displayMessage(
+    window.i18n ? window.i18n.t("msg.yourTurn") : "Your Turn",
+    false,
+    2000,
+  );
+
+  // 状態更新を通知
+  updateUI();
 }
 
 function playerHit() {
@@ -263,7 +302,7 @@ function playerHit() {
   const handValue = calculateHandValue(currentHand);
   if (handValue > 21) {
     const msg = window.i18n
-      ? window.i18n.t('msg.handBusts', { hand: activeHandIndex + 1 })
+      ? window.i18n.t("msg.handBusts", { hand: activeHandIndex + 1 })
       : `Hand ${activeHandIndex + 1} Busts!`;
     displayMessage(msg, false, 2000);
     moveToNextHandOrDealer();
@@ -310,7 +349,11 @@ function moveToNextHandOrDealer() {
     activeHandIndex = 1;
     updateActiveHandIndicator();
     updateUI();
-    displayMessage(window.i18n ? window.i18n.t('msg.secondHandTurn') : "Second Hand's Turn", false, 2000);
+    displayMessage(
+      window.i18n ? window.i18n.t("msg.secondHandTurn") : "Second Hand's Turn",
+      false,
+      2000,
+    );
   } else {
     gameState = "DEALER_TURN";
     updateUI();
@@ -319,7 +362,11 @@ function moveToNextHandOrDealer() {
 }
 
 function dealerPlay() {
-  displayMessage(window.i18n ? window.i18n.t('msg.dealerTurn') : "Dealer's Turn", false, 1500);
+  displayMessage(
+    window.i18n ? window.i18n.t("msg.dealerTurn") : "Dealer's Turn",
+    false,
+    1500,
+  );
 
   // Flip hidden card
   const hiddenCardEl = dealerHandEl.children[1];
@@ -328,10 +375,17 @@ function dealerPlay() {
   updateScores();
 
   const dealerInterval = setInterval(() => {
-    let dealerScore = calculateHandValue(dealerHand);
-    if (dealerScore < 17) {
+    const dealerScore = calculateHandValue(dealerHand);
+    const isSoft = isSoftHand(dealerHand);
+
+    // H17 Rule: Dealer hits on Soft 17
+    // Dealer must hit if score < 17, or if score == 17 and hand is soft
+    const shouldHit = dealerScore < 17 || (dealerScore === 17 && isSoft);
+
+    if (shouldHit) {
       dealerHand.push(deck.pop());
       renderHands();
+      updateScores();
     } else {
       clearInterval(dealerInterval);
       resolveHand();
@@ -343,10 +397,12 @@ function resolveHand(specialOutcome = null) {
   gameState = "HAND_OVER";
 
   if (specialOutcome === "Player Blackjack") {
-    displayMessage(window.i18n ? window.i18n.t('msg.blackjackWin') : "Blackjack! You win!");
+    displayMessage(
+      window.i18n ? window.i18n.t("msg.blackjackWin") : "Blackjack! You win!",
+    );
     playerBalance += currentBet + currentBet * 1.5;
   } else if (specialOutcome === "Push") {
-    displayMessage(window.i18n ? window.i18n.t('msg.push') : "Push!");
+    displayMessage(window.i18n ? window.i18n.t("msg.push") : "Push!");
     playerBalance += currentBet;
   } else {
     const dealerScore = calculateHandValue(dealerHand);
@@ -358,17 +414,25 @@ function resolveHand(specialOutcome = null) {
       const betForHand = playerHands.length > 1 ? currentBet : currentBet;
 
       if (playerScore > 21) {
-        finalMessage += (window.i18n ? window.i18n.t('msg.handResult.bust', { hand: index + 1 }) : `Hand ${index + 1}: Bust! You lose.`);
+        finalMessage += window.i18n
+          ? window.i18n.t("msg.handResult.bust", { hand: index + 1 })
+          : `Hand ${index + 1}: Bust! You lose.`;
       } else if (dealerScore > 21 || playerScore > dealerScore) {
-        finalMessage += (window.i18n ? window.i18n.t('msg.handResult.win', { hand: index + 1 }) : `Hand ${index + 1}: You win!`);
+        finalMessage += window.i18n
+          ? window.i18n.t("msg.handResult.win", { hand: index + 1 })
+          : `Hand ${index + 1}: You win!`;
         totalWinnings += betForHand * 2;
       } else if (playerScore < dealerScore) {
-        finalMessage += (window.i18n ? window.i18n.t('msg.handResult.dealerWins', { hand: index + 1 }) : `Hand ${index + 1}: Dealer wins.`);
+        finalMessage += window.i18n
+          ? window.i18n.t("msg.handResult.dealerWins", { hand: index + 1 })
+          : `Hand ${index + 1}: Dealer wins.`;
       } else {
-        finalMessage += (window.i18n ? window.i18n.t('msg.handResult.push', { hand: index + 1 }) : `Hand ${index + 1}: Push.`);
+        finalMessage += window.i18n
+          ? window.i18n.t("msg.handResult.push", { hand: index + 1 })
+          : `Hand ${index + 1}: Push.`;
         totalWinnings += betForHand;
       }
-      finalMessage += (playerHands.length > 1 ? "<br>" : "");
+      finalMessage += playerHands.length > 1 ? "<br>" : "";
     });
 
     displayMessage(finalMessage);
@@ -376,13 +440,13 @@ function resolveHand(specialOutcome = null) {
   }
 
   currentBet = 0;
-  
+
   // スコア管理: 試合数をカウント
   if (window.ScoreManager && scoreData) {
     scoreData = window.ScoreManager.incrementMatchCount(scoreData);
     scoreData = window.ScoreManager.updateCurrentCash(scoreData, playerBalance);
   }
-  
+
   // 破産チェック
   if (playerBalance <= 0) {
     handleBankruptcy();
@@ -405,77 +469,94 @@ function displayMessage(msg, isPermanent = false, duration = 3000) {
 
 function handleBankruptcy() {
   if (!window.ScoreManager || !scoreData) return;
-  
+
   // スコアを記録
   const finalScore = scoreData.currentScore.matchCount;
   scoreData = window.ScoreManager.recordBankruptcy(scoreData);
-  
+
+  // プレイヤーバランスをリセット（モーダル表示前にリセット）
+  playerBalance = window.ScoreManager.DEFAULT_START_CASH;
+  currentBet = 0;
+
+  // UIを更新してからモーダルを表示
+  updateUI();
+
   // 破産メッセージと結果を表示
   showBankruptcyModal(finalScore);
-  
-  // プレイヤーバランスをリセット
-  playerBalance = window.ScoreManager.DEFAULT_START_CASH;
-  updateUI();
 }
 
 function showBankruptcyModal(finalScore) {
-  const modal = document.getElementById('bankruptcy-modal');
-  const overlay = document.getElementById('modal-overlay');
-  const finalScoreEl = document.getElementById('final-score');
-  const bestScoreModalEl = document.getElementById('best-score-modal');
-  const newRecordEl = document.getElementById('new-record-badge');
-  
-  if (!modal || !overlay) return;
-  
-  finalScoreEl.textContent = finalScore;
-  bestScoreModalEl.textContent = scoreData.bestScore;
-  
-  // 新記録の場合はバッジを表示
-  if (finalScore === scoreData.bestScore && finalScore > 0) {
-    newRecordEl.classList.remove('hidden');
-  } else {
-    newRecordEl.classList.add('hidden');
+  if (!window.ModalManager || !scoreData) return;
+
+  // 新記録バッジの表示制御
+  const newRecordBadge = document.getElementById("new-record-badge");
+  if (newRecordBadge) {
+    if (finalScore === scoreData.bestScore && finalScore > 0) {
+      newRecordBadge.classList.remove("hidden");
+    } else {
+      newRecordBadge.classList.add("hidden");
+    }
   }
-  
-  overlay.classList.remove('hidden');
-  modal.classList.remove('hidden');
+
+  // スコア表示を更新
+  const finalScoreEl = document.getElementById("final-score");
+  const bestScoreModalEl = document.getElementById("best-score-modal");
+  if (finalScoreEl) finalScoreEl.textContent = finalScore;
+  if (bestScoreModalEl) bestScoreModalEl.textContent = scoreData.bestScore;
+
+  // モーダルを開く
+  ModalManager.open("bankruptcy-modal");
 }
 
 function closeBankruptcyModal() {
-  const modal = document.getElementById('bankruptcy-modal');
-  const overlay = document.getElementById('modal-overlay');
-  
-  if (modal && overlay) {
-    modal.classList.add('hidden');
-    overlay.classList.add('hidden');
+  if (window.ModalManager) {
+    ModalManager.close("bankruptcy-modal");
   }
-  
-  resetForNewHand();
+  // ゲーム状態をBETTINGにリセット
+  gameState = "BETTING";
+  playerHands = [];
+  dealerHand = [];
+  activeHandIndex = 0;
+  currentBet = 0;
+
+  // UIを更新（スコア表示もここで更新される）
+  updateUI();
+
+  // コンテキストヒント更新
+  if (window.guide && typeof window.guide.updateContextHint === "function") {
+    window.guide.updateContextHint({
+      state: gameState,
+      playerBalance,
+      currentBet,
+      playerHands,
+      dealerHand,
+    });
+  }
 }
 
 function showScoreBoard() {
-  const modal = document.getElementById('scoreboard-modal');
-  const overlay = document.getElementById('modal-overlay');
-  
-  if (!modal || !overlay || !scoreData) return;
-  
+  if (!scoreData) return;
   // 統計情報の更新
-  document.getElementById('stats-best-score').textContent = scoreData.bestScore;
-  document.getElementById('stats-total-games').textContent = scoreData.totalGames;
-  document.getElementById('stats-total-matches').textContent = scoreData.totalMatches;
-  document.getElementById('stats-average-score').textContent = 
+  document.getElementById("stats-best-score").textContent = scoreData.bestScore;
+  document.getElementById("stats-total-games").textContent =
+    scoreData.totalGames;
+  document.getElementById("stats-total-matches").textContent =
+    scoreData.totalMatches;
+  document.getElementById("stats-average-score").textContent =
     window.ScoreManager.calculateAverageScore(scoreData);
-  
+
   // 履歴の更新
-  const historyList = document.getElementById('score-history-list');
-  historyList.innerHTML = '';
-  
-  if (scoreData.scoreHistory.length === 0) {
-    historyList.innerHTML = '<p class="text-gray-400 text-center py-4">まだ記録がありません</p>';
+  const historyList = document.getElementById("score-history-list");
+  historyList.innerHTML = "";
+  const history = scoreData.scoreHistory.slice(-10).reverse();
+  if (history.length === 0) {
+    historyList.innerHTML =
+      '<p class="text-gray-400 text-center py-4">まだ記録がありません</p>';
   } else {
-    scoreData.scoreHistory.forEach((entry, index) => {
-      const row = document.createElement('div');
-      row.className = 'grid grid-cols-3 gap-4 p-3 bg-[#1a2332]/50 rounded-lg hover:bg-[#1a2332]/70 transition-colors';
+    history.forEach((entry, index) => {
+      const row = document.createElement("div");
+      row.className =
+        "grid grid-cols-3 gap-4 p-3 bg-[#1a2332]/50 rounded-lg hover:bg-[#1a2332]/70 transition-colors";
       row.innerHTML = `
         <div class="text-center">
           <div class="text-[#d4af37] font-bold text-xl">${entry.score}</div>
@@ -493,18 +574,18 @@ function showScoreBoard() {
       historyList.appendChild(row);
     });
   }
-  
-  overlay.classList.remove('hidden');
-  modal.classList.remove('hidden');
+  if (window.ModalManager) {
+    ModalManager.open("scoreboard-modal");
+  }
 }
 
 function closeScoreBoard() {
-  const modal = document.getElementById('scoreboard-modal');
-  const overlay = document.getElementById('modal-overlay');
-  
+  const modal = document.getElementById("scoreboard-modal");
+  const overlay = document.getElementById("modal-overlay");
+
   if (modal && overlay) {
-    modal.classList.add('hidden');
-    overlay.classList.add('hidden');
+    modal.classList.add("hidden");
+    overlay.classList.add("hidden");
   }
 }
 
@@ -520,10 +601,17 @@ function resetForNewHand() {
   splitPlayerHandEl.classList.add("hidden");
   mainPlayerHandEl.classList.remove("active-hand");
 
-  dealerScoreEl.textContent = window.i18n ? window.i18n.t('score.dealer', { score: '?' }) : "Dealer: ?";
-  playerScoreEl.textContent = window.i18n ? window.i18n.t('score.player', { score: 0 }) : "Player: 0";
+  dealerScoreEl.textContent = window.i18n
+    ? window.i18n.t("score.dealer", { score: "?" })
+    : "Dealer: ?";
+  playerScoreEl.textContent = window.i18n
+    ? window.i18n.t("score.player", { score: 0 })
+    : "Player: 0";
 
-  displayMessage(window.i18n ? window.i18n.t('msg.placeYourBet') : "Place Your Bet", true);
+  displayMessage(
+    window.i18n ? window.i18n.t("msg.placeYourBet") : "Place Your Bet",
+    true,
+  );
   updateUI();
 }
 
@@ -543,42 +631,42 @@ newHandBtn.addEventListener("click", resetForNewHand);
 function init() {
   deck = createDeck();
   shuffleDeck(deck);
-  
+
   // スコア管理の初期化
   if (window.ScoreManager) {
     scoreData = window.ScoreManager.loadScoreData();
     playerBalance = scoreData.currentScore.currentCash;
   }
-  
+
   resetForNewHand();
 
   // i18n setup
   if (window.i18n) {
     window.i18n.init();
-    
+
     // Language selector (replaces old buttons)
-    const langSelect = document.getElementById('language-select');
+    const langSelect = document.getElementById("language-select");
     if (langSelect) {
       // Set initial value based on current language
       langSelect.value = window.i18n.getLang();
-      
-      langSelect.addEventListener('change', (e) => {
+
+      langSelect.addEventListener("change", (e) => {
         window.i18n.setLang(e.target.value);
       });
     }
 
     // When language changes, refresh dynamic content (scores, message)
-    window.addEventListener('langchange', () => {
+    window.addEventListener("langchange", () => {
       updateScores();
       // If we're in BETTING state, ensure the placeholder message is translated
-      if (gameState === 'BETTING') {
-        displayMessage(window.i18n.t('msg.placeYourBet'), true);
+      if (gameState === "BETTING") {
+        displayMessage(window.i18n.t("msg.placeYourBet"), true);
       }
       // Also update static labels if any dynamic ones are missed
       window.i18n.applyStaticLabels();
-      
+
       // Update language selector value
-      const langSelect = document.getElementById('language-select');
+      const langSelect = document.getElementById("language-select");
       if (langSelect) {
         langSelect.value = window.i18n.getLang();
       }
@@ -592,5 +680,3 @@ init();
 window.showScoreBoard = showScoreBoard;
 window.closeScoreBoard = closeScoreBoard;
 window.closeBankruptcyModal = closeBankruptcyModal;
-
-

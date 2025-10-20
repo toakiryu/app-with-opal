@@ -6,21 +6,21 @@
   --casino-green: #0d5e3a;
   --casino-green-dark: #094029;
   --casino-green-light: #12754a;
-  
+
   /* Luxurious Gold Accents */
   --gold: #d4af37;
   --gold-light: #f0d678;
   --gold-dark: #b8941f;
-  
+
   /* Deep Navy - Sophisticated contrast */
   --navy: #1a2332;
   --navy-light: #2a3544;
   --navy-dark: #0f1419;
-  
+
   /* Rich Red - For chips and accents */
   --casino-red: #c41e3a;
   --casino-red-dark: #a01828;
-  
+
   /* Neutral tones */
   --cream: #f5f5dc;
   --smoke: #2c2c2c;
@@ -53,9 +53,18 @@ body {
   animation: octocat-wave 560ms ease-in-out;
 }
 @keyframes octocat-wave {
-  0%, 100% { transform: rotate(0); }
-  20%, 60% { transform: rotate(-25deg); }
-  40%, 80% { transform: rotate(10deg); }
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(-25deg);
+  }
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
 }
 @media (max-width: 500px) {
   .github-corner:hover .octo-arm {
@@ -161,8 +170,93 @@ body {
 /* Score displays */
 #dealer-score,
 #player-score {
-  background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(26, 35, 50, 0.7) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(26, 35, 50, 0.9) 0%,
+    rgba(26, 35, 50, 0.7) 100%
+  );
   border: 1px solid var(--gold-dark);
   color: var(--gold-light);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Modal styles */
+#modal-overlay {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#bankruptcy-modal,
+#scoreboard-modal {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -60%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+/* Scrollbar styling */
+.scrollbar-transparent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-transparent::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 0px;
+}
+
+.scrollbar-transparent::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0px;
+}
+
+.scrollbar-transparent::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+/* Scrollbar gold styling */
+.scrollbar-gold::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-gold::-webkit-scrollbar-track {
+  background: rgba(26, 35, 50, 0.3);
+  border-radius: 4px;
+}
+
+.scrollbar-gold::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 4px;
+}
+
+.scrollbar-gold::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* New record badge animation */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
 }

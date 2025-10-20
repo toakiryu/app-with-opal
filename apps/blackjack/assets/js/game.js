@@ -24,6 +24,9 @@ let activeHandIndex = 0;
 
 let gameState = "BETTING"; // BETTING, PLAYER_TURN, DEALER_TURN, HAND_OVER
 
+// スコア管理
+let scoreData = null;
+
 // DOM Elements
 const balanceEl = document.getElementById("balance");
 const betEl = document.getElementById("bet");
@@ -36,6 +39,10 @@ const playerHandsContainerEl = document.getElementById(
 const mainPlayerHandEl = document.getElementById("player-hand-main");
 const splitPlayerHandEl = document.getElementById("player-hand-split");
 const messageBox = document.getElementById("message-box");
+
+// スコア表示要素
+const matchCountEl = document.getElementById("match-count");
+const bestScoreEl = document.getElementById("best-score");
 
 const bettingControls = document.getElementById("betting-controls");
 const actionControls = document.getElementById("action-controls");
@@ -157,6 +164,14 @@ function updateUI() {
   chipBtns.forEach((btn) => {
     btn.disabled = playerBalance < currentBet + parseInt(btn.dataset.value);
   });
+
+  // スコア表示の更新
+  if (scoreData && matchCountEl) {
+    matchCountEl.textContent = scoreData.currentScore.matchCount;
+  }
+  if (scoreData && bestScoreEl) {
+    bestScoreEl.textContent = scoreData.bestScore;
+  }
 
   bettingControls.style.display = gameState === "BETTING" ? "flex" : "none";
   actionControls.style.display = gameState === "PLAYER_TURN" ? "grid" : "none";
@@ -361,7 +376,19 @@ function resolveHand(specialOutcome = null) {
   }
 
   currentBet = 0;
-  updateUI();
+  
+  // スコア管理: 試合数をカウント
+  if (window.ScoreManager && scoreData) {
+    scoreData = window.ScoreManager.incrementMatchCount(scoreData);
+    scoreData = window.ScoreManager.updateCurrentCash(scoreData, playerBalance);
+  }
+  
+  // 破産チェック
+  if (playerBalance <= 0) {
+    handleBankruptcy();
+  } else {
+    updateUI();
+  }
 }
 
 function displayMessage(msg, isPermanent = false, duration = 3000) {
@@ -373,6 +400,111 @@ function displayMessage(msg, isPermanent = false, duration = 3000) {
         messageBox.style.opacity = 0;
       }
     }, duration);
+  }
+}
+
+function handleBankruptcy() {
+  if (!window.ScoreManager || !scoreData) return;
+  
+  // スコアを記録
+  const finalScore = scoreData.currentScore.matchCount;
+  scoreData = window.ScoreManager.recordBankruptcy(scoreData);
+  
+  // 破産メッセージと結果を表示
+  showBankruptcyModal(finalScore);
+  
+  // プレイヤーバランスをリセット
+  playerBalance = window.ScoreManager.DEFAULT_START_CASH;
+  updateUI();
+}
+
+function showBankruptcyModal(finalScore) {
+  const modal = document.getElementById('bankruptcy-modal');
+  const overlay = document.getElementById('modal-overlay');
+  const finalScoreEl = document.getElementById('final-score');
+  const bestScoreModalEl = document.getElementById('best-score-modal');
+  const newRecordEl = document.getElementById('new-record-badge');
+  
+  if (!modal || !overlay) return;
+  
+  finalScoreEl.textContent = finalScore;
+  bestScoreModalEl.textContent = scoreData.bestScore;
+  
+  // 新記録の場合はバッジを表示
+  if (finalScore === scoreData.bestScore && finalScore > 0) {
+    newRecordEl.classList.remove('hidden');
+  } else {
+    newRecordEl.classList.add('hidden');
+  }
+  
+  overlay.classList.remove('hidden');
+  modal.classList.remove('hidden');
+}
+
+function closeBankruptcyModal() {
+  const modal = document.getElementById('bankruptcy-modal');
+  const overlay = document.getElementById('modal-overlay');
+  
+  if (modal && overlay) {
+    modal.classList.add('hidden');
+    overlay.classList.add('hidden');
+  }
+  
+  resetForNewHand();
+}
+
+function showScoreBoard() {
+  const modal = document.getElementById('scoreboard-modal');
+  const overlay = document.getElementById('modal-overlay');
+  
+  if (!modal || !overlay || !scoreData) return;
+  
+  // 統計情報の更新
+  document.getElementById('stats-best-score').textContent = scoreData.bestScore;
+  document.getElementById('stats-total-games').textContent = scoreData.totalGames;
+  document.getElementById('stats-total-matches').textContent = scoreData.totalMatches;
+  document.getElementById('stats-average-score').textContent = 
+    window.ScoreManager.calculateAverageScore(scoreData);
+  
+  // 履歴の更新
+  const historyList = document.getElementById('score-history-list');
+  historyList.innerHTML = '';
+  
+  if (scoreData.scoreHistory.length === 0) {
+    historyList.innerHTML = '<p class="text-gray-400 text-center py-4">まだ記録がありません</p>';
+  } else {
+    scoreData.scoreHistory.forEach((entry, index) => {
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-3 gap-4 p-3 bg-[#1a2332]/50 rounded-lg hover:bg-[#1a2332]/70 transition-colors';
+      row.innerHTML = `
+        <div class="text-center">
+          <div class="text-[#d4af37] font-bold text-xl">${entry.score}</div>
+          <div class="text-gray-400 text-xs">試合</div>
+        </div>
+        <div class="text-center">
+          <div class="text-white text-sm">${window.ScoreManager.formatDate(entry.endDate)}</div>
+          <div class="text-gray-400 text-xs">プレイ日時</div>
+        </div>
+        <div class="text-center">
+          <div class="text-white text-sm">${window.ScoreManager.formatDuration(entry.duration)}</div>
+          <div class="text-gray-400 text-xs">プレイ時間</div>
+        </div>
+      `;
+      historyList.appendChild(row);
+    });
+  }
+  
+  overlay.classList.remove('hidden');
+  modal.classList.remove('hidden');
+}
+
+function closeScoreBoard() {
+  const modal = document.getElementById('scoreboard-modal');
+  const overlay = document.getElementById('modal-overlay');
+  
+  if (modal && overlay) {
+    modal.classList.add('hidden');
+    overlay.classList.add('hidden');
   }
 }
 
@@ -411,6 +543,13 @@ newHandBtn.addEventListener("click", resetForNewHand);
 function init() {
   deck = createDeck();
   shuffleDeck(deck);
+  
+  // スコア管理の初期化
+  if (window.ScoreManager) {
+    scoreData = window.ScoreManager.loadScoreData();
+    playerBalance = scoreData.currentScore.currentCash;
+  }
+  
   resetForNewHand();
 
   // i18n setup
@@ -448,4 +587,10 @@ function init() {
 }
 
 init();
+
+// グローバルスコープに関数を公開（HTMLのonclick属性で使用）
+window.showScoreBoard = showScoreBoard;
+window.closeScoreBoard = closeScoreBoard;
+window.closeBankruptcyModal = closeBankruptcyModal;
+
 

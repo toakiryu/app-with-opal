@@ -68,7 +68,7 @@ ScoreManager.saveScoreData(data);
 
 ```javascript
 // .env ファイル
-VITE_SECRET_KEY=my_secret_123
+VITE_SECRET_KEY = my_secret_123;
 
 // コード
 const SECRET = import.meta.env.VITE_SECRET_KEY;
@@ -78,7 +78,7 @@ const SECRET = import.meta.env.VITE_SECRET_KEY;
 
 ```javascript
 // ビルド後のコード（ブラウザで実行される）
-const SECRET = "my_secret_123";  // ← 丸見え！
+const SECRET = "my_secret_123"; // ← 丸見え！
 ```
 
 **環境変数は「サーバーサイド」で意味があります。**  
@@ -87,12 +87,12 @@ const SECRET = "my_secret_123";  // ← 丸見え！
 ## 比較表
 
 | セキュリティ手法 | カジュアル改ざん防止 | 技術的ユーザー対策 | 実装コスト |
-|-----------------|---------------------|-------------------|-----------|
-| **現在の実装** | ✅ 非常に有効 | ❌ 防げない | 低 |
-| 環境変数 | ✅ 有効 | ❌ 防げない | 低 |
-| 高度な難読化 | ✅ 有効 | 🟡 少し困難 | 高 |
-| WebAssembly | ✅ 有効 | 🟡 困難 | 非常に高 |
-| **サーバー検証** | ✅ 完全防止 | ✅ 完全防止 | 中〜高 |
+| ---------------- | -------------------- | ------------------ | ---------- |
+| **現在の実装**   | ✅ 非常に有効        | ❌ 防げない        | 低         |
+| 環境変数         | ✅ 有効              | ❌ 防げない        | 低         |
+| 高度な難読化     | ✅ 有効              | 🟡 少し困難        | 高         |
+| WebAssembly      | ✅ 有効              | 🟡 困難            | 非常に高   |
+| **サーバー検証** | ✅ 完全防止          | ✅ 完全防止        | 中〜高     |
 
 ## 唯一の完全な解決策
 
@@ -125,16 +125,16 @@ async function submitScore(score) {
 // サーバー (Node.js/Express)
 app.post('/api/score', async (req, res) => {
   const { score, playLog } = req.body;
-  
+
   // サーバー側で検証
   if (!validatePlayLog(playLog)) {
     return res.status(400).json({ error: 'Invalid play log' });
   }
-  
+
   if (score > calculateMaxPossibleScore(playLog)) {
     return res.status(400).json({ error: 'Impossible score' });
   }
-  
+
   // データベースに保存
   await db.scores.insert({ userId, score, timestamp: Date.now() });
   res.json({ success: true });
@@ -144,12 +144,14 @@ app.post('/api/score', async (req, res) => {
 ## このゲームに適した判断
 
 ### ゲームの性質
+
 - 💰 金銭が絡まない
 - 🏆 公式ランキングなし
 - 🎮 個人的な楽しみ
 - 📱 オフラインで動作
 
 ### セキュリティ要件
+
 - ✅ カジュアルユーザーの改ざん防止 → **達成**
 - ✅ データ破損の検出 → **達成**
 - ❌ 技術的ユーザーの完全な防止 → **不要**

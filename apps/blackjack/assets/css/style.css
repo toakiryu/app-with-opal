@@ -32,6 +32,11 @@ body {
   touch-action: manipulation;
   background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
 }
+body.no-scroll {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
 
 /* GitHub Corner */
 .github-corner svg {
@@ -83,8 +88,14 @@ body {
   width: clamp(60px, 15vw, 110px);
   height: clamp(84px, 21vw, 154px);
   transform-style: preserve-3d;
-  transition: transform 0.6s, opacity 0.6s;
+  transition: opacity 0.6s;
   position: relative;
+}
+.card-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
 }
 .card-face {
   position: absolute;
@@ -98,11 +109,16 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.card-face * {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
 .card-front {
   background-color: white;
 }
 .card-back {
-  background: linear-gradient(135deg, var(--navy) 25%, transparent 25%) -50px 0,
+  background:
+    linear-gradient(135deg, var(--navy) 25%, transparent 25%) -50px 0,
     linear-gradient(225deg, var(--navy) 25%, transparent 25%) -50px 0,
     linear-gradient(315deg, var(--navy) 25%, transparent 25%),
     linear-gradient(45deg, var(--navy) 25%, transparent 25%);
@@ -111,12 +127,15 @@ body {
   border: 2px solid var(--gold);
   transform: rotateY(180deg);
 }
-.flipped {
+.card.flipped .card-inner {
   transform: rotateY(180deg);
 }
 .hand-container > .card {
   margin-left: -35%;
   transition: transform 0.5s ease-out;
+}
+.hand-container {
+  perspective: 1000px;
 }
 .hand-container > .card:first-child {
   margin-left: 0;
@@ -135,7 +154,9 @@ body {
   animation: deal-card 0.5s ease-out forwards;
 }
 .chip {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .chip:hover:not(:disabled) {
   transform: translateY(-4px);
@@ -146,7 +167,9 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 .action-button {
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 .action-button:hover:not(:disabled) {
   transform: scale(1.05);
@@ -259,4 +282,175 @@ body {
     transform: scale(1.05);
     opacity: 0.9;
   }
+}
+
+/* ==============================
+   Guide & Tooltip & Tutorial UI
+   ============================== */
+.tooltip {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  max-width: 240px;
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+.tooltip[data-placement="bottom"] {
+  transform: translate(-50%, 0);
+}
+
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  z-index: 9500;
+}
+
+.tutorial-spotlight {
+  position: fixed;
+  z-index: 9600;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.tutorial-panel {
+  position: fixed;
+  z-index: 9700;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: #fff;
+  border: 1px solid var(--gold-dark);
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: min(92vw, 680px);
+  max-height: calc(100vh - 80px);
+  overflow: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.tutorial-panel.collapsed {
+  max-height: unset;
+  overflow: visible;
+  padding-bottom: 8px;
+}
+.tutorial-panel h3 {
+  color: var(--gold-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.tutorial-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 0;
+  margin: 0 0 6px 0;
+  cursor: pointer;
+}
+.tutorial-toggle:focus {
+  outline: 2px solid var(--gold-dark);
+  outline-offset: 2px;
+}
+.tutorial-toggle .chevron {
+  width: 16px;
+  height: 16px;
+  border-right: 2px solid var(--gold-light);
+  border-bottom: 2px solid var(--gold-light);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+.tutorial-panel.collapsed .tutorial-toggle .chevron {
+  transform: rotate(-135deg);
+}
+.tutorial-panel.collapsed #tutorial-body {
+  display: none;
+}
+.tutorial-panel .actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--gold-light);
+  border: 1px solid var(--gold-dark);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.btn-primary {
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: #1a2332;
+  font-weight: 700;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+/* Help Button (floating) */
+#help-button {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 9000;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: var(--gold-light);
+  border: 1px solid var(--gold-dark);
+  border-radius: 9999px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+#help-button:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* Modal common styles */
+.modal {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.modal-overlay {
+  cursor: pointer;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Close button common style */
+.close-btn {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.1);
+}
+
+.close-btn:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }

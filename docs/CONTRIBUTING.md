@@ -34,18 +34,23 @@ Create a new folder in the `apps/` directory, copy your Opal-created app files, 
 # アプリ名 / App Name
 
 ## 概要 / Overview
+
 [アプリの説明 / App description]
 
 ## 作成日 / Creation Date
+
 YYYY-MM-DD
 
 ## 使用方法 / How to Use
+
 [使用方法の説明 / Usage instructions]
 
 ## スクリーンショット / Screenshots
+
 [可能であればスクリーンショットを追加 / Add screenshots if possible]
 
 ## リンク / Links
+
 - [Opal プロジェクト / Opal Project]: (リンクがある場合 / if available)
 ```
 
@@ -73,6 +78,7 @@ git push origin add-your-app-name
 - コミットメッセージは明確にしてください
 
 Each app should:
+
 - Be in its own folder
 - Include a clear README.md
 - Maintain proper file structure

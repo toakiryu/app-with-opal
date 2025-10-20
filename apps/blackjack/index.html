@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
@@ -8,27 +8,76 @@
       name="description"
       content="A stylish Blackjack web app created with Opal."
     />
-    
+
     <!-- PWA設定 -->
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#0d5e3a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="Blackjack" />
-    
+
     <!-- アイコン設定 -->
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/icon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/icon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/icon-180x180.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="./assets/images/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="./assets/images/icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="./assets/images/icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="./assets/images/icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="./assets/images/icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="./assets/images/icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="./assets/images/icon-60x60.png" />
-    <link rel="apple-touch-icon" sizes="57x57" href="./assets/images/icon-57x57.png" />
-    
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/icon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/images/icon-16x16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./assets/images/icon-180x180.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="./assets/images/icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="./assets/images/icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="./assets/images/icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="./assets/images/icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="./assets/images/icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="./assets/images/icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="./assets/images/icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="./assets/images/icon-57x57.png"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -51,6 +100,15 @@
     ></script>
   </head>
   <body class="select-none">
+    <!-- Help Button -->
+    <button
+      id="help-button"
+      aria-label="ヘルプ"
+      title="ヘルプ（?）"
+      data-i18n="help.title"
+    >
+      ❓ ヘルプ
+    </button>
     <!-- GitHub Corner -->
     <a
       href="https://github.com/toakiryu/app-with-opal"
@@ -134,9 +192,13 @@
           </div>
 
           <!-- Controls Area -->
-          <div class="bg-gradient-to-br from-[#1a2332]/80 to-[#2a3544]/80 backdrop-blur-sm rounded-2xl p-4 mt-4 border border-[#d4af37]/20">
+          <div
+            class="bg-gradient-to-br from-[#1a2332]/80 to-[#2a3544]/80 backdrop-blur-sm rounded-2xl p-4 mt-4 border border-[#d4af37]/20"
+          >
             <!-- Player Info -->
-            <div class="flex justify-between items-center text-[#f0d678] mb-4 px-2">
+            <div
+              class="flex justify-between items-center text-[#f0d678] mb-4 px-2"
+            >
               <div class="text-lg font-semibold">
                 <span data-i18n="label.balance">Balance:</span>
                 <span id="balance" class="font-bold text-[#d4af37]">$1000</span>
@@ -146,9 +208,11 @@
                 <span id="bet" class="font-bold text-[#d4af37]">$0</span>
               </div>
             </div>
-            
+
             <!-- Score Info -->
-            <div class="flex justify-between items-center text-[#f0d678] mb-4 px-2 pb-4 border-b border-[#d4af37]/20">
+            <div
+              class="flex justify-between items-center text-[#f0d678] mb-4 px-2 pb-4 border-b border-[#d4af37]/20"
+            >
               <div class="text-sm font-semibold">
                 <span>試合数:</span>
                 <span id="match-count" class="font-bold text-white">0</span>
@@ -174,6 +238,7 @@
                 <button
                   data-i18n="chip.5"
                   data-value="5"
+                  data-i18n-tooltip="tooltip.chip.5"
                   class="chip w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#c41e3a] to-[#a01828] text-white font-bold text-lg border-4 border-white/50 shadow-lg hover:shadow-[0_0_20px_rgba(196,30,58,0.6)]"
                 >
                   $5
@@ -181,6 +246,7 @@
                 <button
                   data-i18n="chip.10"
                   data-value="10"
+                  data-i18n-tooltip="tooltip.chip.10"
                   class="chip w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#1e40af] to-[#1e3a8a] text-white font-bold text-lg border-4 border-white/50 shadow-lg hover:shadow-[0_0_20px_rgba(30,64,175,0.6)]"
                 >
                   $10
@@ -188,6 +254,7 @@
                 <button
                   data-i18n="chip.25"
                   data-value="25"
+                  data-i18n-tooltip="tooltip.chip.25"
                   class="chip w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#16a34a] to-[#15803d] text-white font-bold text-lg border-4 border-white/50 shadow-lg hover:shadow-[0_0_20px_rgba(22,163,74,0.6)]"
                 >
                   $25
@@ -195,6 +262,7 @@
                 <button
                   data-i18n="chip.100"
                   data-value="100"
+                  data-i18n-tooltip="tooltip.chip.100"
                   class="chip w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8941f] text-[#1a2332] font-bold text-lg border-4 border-white/50 shadow-lg hover:shadow-[0_0_20px_rgba(212,175,55,0.8)]"
                 >
                   $100
@@ -205,6 +273,7 @@
                   id="deal-btn"
                   class="action-button flex-1 bg-gradient-to-r from-[#d4af37] to-[#b8941f] text-[#1a2332] py-3 rounded-lg font-bold text-xl uppercase tracking-wider shadow-md disabled:from-gray-500 disabled:to-gray-600 disabled:text-gray-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
                   data-i18n="btn.deal"
+                  data-i18n-tooltip="tooltip.deal"
                 >
                   Deal
                 </button>
@@ -212,6 +281,7 @@
                   id="clear-bet-btn"
                   class="action-button bg-gradient-to-r from-[#c41e3a] to-[#a01828] text-white px-4 py-3 rounded-lg font-bold shadow-md hover:shadow-[0_0_20px_rgba(196,30,58,0.5)]"
                   data-i18n="btn.clear"
+                  data-i18n-tooltip="tooltip.clear"
                 >
                   Clear
                 </button>
@@ -227,6 +297,7 @@
                 id="hit-btn"
                 class="action-button bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white py-3 rounded-lg font-bold text-xl uppercase tracking-wider shadow-md hover:shadow-[0_0_15px_rgba(22,163,74,0.5)]"
                 data-i18n="btn.hit"
+                data-i18n-tooltip="tooltip.hit"
               >
                 Hit
               </button>
@@ -234,6 +305,7 @@
                 id="stand-btn"
                 class="action-button bg-gradient-to-r from-[#c41e3a] to-[#a01828] text-white py-3 rounded-lg font-bold text-xl uppercase tracking-wider shadow-md hover:shadow-[0_0_15px_rgba(196,30,58,0.5)]"
                 data-i18n="btn.stand"
+                data-i18n-tooltip="tooltip.stand"
               >
                 Stand
               </button>
@@ -241,6 +313,7 @@
                 id="double-btn"
                 class="action-button bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] text-white py-3 rounded-lg font-bold text-xl uppercase tracking-wider shadow-md hover:shadow-[0_0_15px_rgba(30,64,175,0.5)]"
                 data-i18n="btn.double"
+                data-i18n-tooltip="tooltip.double"
               >
                 Double
               </button>
@@ -248,10 +321,17 @@
                 id="split-btn"
                 class="action-button bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white py-3 rounded-lg font-bold text-xl uppercase tracking-wider shadow-md hover:shadow-[0_0_15px_rgba(124,58,237,0.5)]"
                 data-i18n="btn.split"
+                data-i18n-tooltip="tooltip.split"
               >
                 Split
               </button>
             </div>
+
+            <!-- Contextual Hint Area -->
+            <div
+              id="context-hint"
+              class="text-xs text-gray-300 mt-2 min-h-[1.5rem]"
+            ></div>
 
             <!-- New Hand Control -->
             <div id="new-hand-controls" class="hidden">
@@ -259,6 +339,7 @@
                 id="new-hand-btn"
                 class="action-button w-full bg-gradient-to-r from-[#d4af37] to-[#b8941f] text-[#1a2332] py-3 rounded-lg font-bold text-xl uppercase tracking-wider shadow-md hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
                 data-i18n="btn.newHand"
+                data-i18n-tooltip="tooltip.newHand"
               >
                 New Hand
               </button>
@@ -268,28 +349,55 @@
       </main>
 
       <!-- Footer -->
-      <footer class="bg-gradient-to-b from-[#0f1419] to-[#000000] text-gray-300 py-8 px-4 border-t border-[#d4af37]/20">
+      <footer
+        class="bg-gradient-to-b from-[#0f1419] to-[#000000] text-gray-300 py-8 px-4 border-t border-[#d4af37]/20"
+      >
         <div class="max-w-6xl mx-auto">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-6">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-6"
+          >
             <!-- About Section -->
             <div>
-              <h3 class="text-[#f0d678] font-bold text-lg mb-3" data-i18n="footer.about.title">About This App</h3>
-              <p class="text-sm leading-relaxed text-gray-400" data-i18n="footer.about.desc">
-                A stylish Blackjack web app created for practicing casino game rules and strategies. Developed for a school cultural festival casino experience.
+              <h3
+                class="text-[#f0d678] font-bold text-lg mb-3"
+                data-i18n="footer.about.title"
+              >
+                About This App
+              </h3>
+              <p
+                class="text-sm leading-relaxed text-gray-400"
+                data-i18n="footer.about.desc"
+              >
+                A stylish Blackjack web app created for practicing casino game
+                rules and strategies. Developed for a school cultural festival
+                casino experience.
               </p>
             </div>
 
             <!-- AI Development Section -->
             <div>
-              <h3 class="text-[#f0d678] font-bold text-lg mb-3" data-i18n="footer.ai.title">AI-Powered Development</h3>
-              <p class="text-sm leading-relaxed text-gray-400" data-i18n="footer.ai.desc">
-                This project was primarily developed by AI. Opal designed the game structure, initial design, and created the foundation. GitHub Copilot enhanced, refined, and extended the functionality.
+              <h3
+                class="text-[#f0d678] font-bold text-lg mb-3"
+                data-i18n="footer.ai.title"
+              >
+                AI-Powered Development
+              </h3>
+              <p
+                class="text-sm leading-relaxed text-gray-400"
+                data-i18n="footer.ai.desc"
+              >
+                This project was primarily developed by AI. Opal designed the
+                game structure, initial design, and created the foundation.
+                GitHub Copilot enhanced, refined, and extended the
+                functionality.
               </p>
             </div>
 
             <!-- Score Tracking Note -->
             <div>
-              <h3 class="text-[#f0d678] font-bold text-lg mb-3">📊 スコア記録について</h3>
+              <h3 class="text-[#f0d678] font-bold text-lg mb-3">
+                📊 スコア記録について
+              </h3>
               <p class="text-sm leading-relaxed text-gray-400">
                 このゲームはあなたのブラウザにスコアを保存します。カジュアルな改ざんは防ぎますが、技術的な知識があれば改ざん可能です。これはオフラインゲームの仕様です。スコアを偽っても、自己満足以外の意味はありません。
               </p>
@@ -297,31 +405,76 @@
 
             <!-- Quick Links -->
             <div>
-              <h3 class="text-[#f0d678] font-bold text-lg mb-3" data-i18n="footer.quickLinks.title">Quick Links</h3>
+              <h3
+                class="text-[#f0d678] font-bold text-lg mb-3"
+                data-i18n="footer.quickLinks.title"
+              >
+                Quick Links
+              </h3>
               <ul class="space-y-2 text-sm">
                 <li>
-                  <a href="https://github.com/toakiryu/app-with-opal" target="_blank" rel="noopener noreferrer" 
-                     class="hover:text-[#d4af37] transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  <a
+                    href="https://github.com/toakiryu/app-with-opal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-[#d4af37] transition-colors flex items-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                      />
                     </svg>
-                    <span data-i18n="footer.quickLinks.github">GitHub Repository</span>
+                    <span data-i18n="footer.quickLinks.github"
+                      >GitHub Repository</span
+                    >
                   </a>
                 </li>
                 <li>
-                  <a href="https://opal.withgoogle.com" target="_blank" rel="noopener noreferrer" 
-                     class="hover:text-[#d4af37] transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                  <a
+                    href="https://opal.withgoogle.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-[#d4af37] transition-colors flex items-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                      />
                     </svg>
                     <span data-i18n="footer.quickLinks.opal">Opal Project</span>
                   </a>
                 </li>
                 <li>
-                  <a href="https://app-with-opal.toaki.cc/apps/blackjack" target="_blank" rel="noopener noreferrer" 
-                     class="hover:text-[#d4af37] transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  <a
+                    href="https://app-with-opal.toaki.cc/apps/blackjack"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-[#d4af37] transition-colors flex items-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
                     </svg>
                     <span data-i18n="footer.quickLinks.demo">Demo Site</span>
                   </a>
@@ -331,11 +484,23 @@
 
             <!-- Language Selector -->
             <div>
-              <h3 class="text-[#f0d678] font-bold text-lg mb-3" data-i18n="label.language">Language</h3>
-              <label for="language-select" class="sr-only" data-i18n="label.language">Language</label>
-              <select id="language-select" 
-                      aria-label="Select language"
-                      class="bg-[#1a2332] text-[#f0d678] px-4 py-2 rounded-lg border border-[#d4af37]/40 hover:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37] transition-all cursor-pointer">
+              <h3
+                class="text-[#f0d678] font-bold text-lg mb-3"
+                data-i18n="label.language"
+              >
+                Language
+              </h3>
+              <label
+                for="language-select"
+                class="sr-only"
+                data-i18n="label.language"
+                >Language</label
+              >
+              <select
+                id="language-select"
+                aria-label="Select language"
+                class="bg-[#1a2332] text-[#f0d678] px-4 py-2 rounded-lg border border-[#d4af37]/40 hover:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37] transition-all cursor-pointer"
+              >
                 <option value="ja">日本語 (Japanese)</option>
                 <option value="en">English</option>
               </select>
@@ -344,12 +509,21 @@
 
           <!-- Bottom Bar -->
           <div class="border-t border-[#d4af37]/20 pt-6 mt-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-              <p class="text-gray-400" data-i18n="footer.copyright">© 2025 Toa Kiryu. All rights reserved.</p>
+            <div
+              class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
+            >
+              <p class="text-gray-400" data-i18n="footer.copyright">
+                © 2025 Toa Kiryu. All rights reserved.
+              </p>
               <p class="flex items-center gap-2 text-gray-400">
                 <span data-i18n="footer.madeWith">Made with</span>
-                <a href="https://opal.withgoogle.com" target="_blank" rel="noopener noreferrer" 
-                   class="text-[#d4af37] hover:text-[#f0d678] font-semibold transition-colors">Opal</a>
+                <a
+                  href="https://opal.withgoogle.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-[#d4af37] hover:text-[#f0d678] font-semibold transition-colors"
+                  >Opal</a
+                >
               </p>
             </div>
           </div>
@@ -358,21 +532,147 @@
     </section>
 
     <!-- Modal Overlay -->
-    <div id="modal-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden"></div>
+    <div
+      id="modal-overlay"
+      class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Help Modal -->
+    <div
+      id="help-modal"
+      class="modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-4xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="help-modal-title"
+      data-overlay="true"
+      data-lock-scroll="true"
+      data-multi="false"
+      tabindex="-1"
+    >
+      <button
+        class="close-btn absolute top-4 right-4 text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+        aria-label="閉じる"
+        title="閉じる"
+        tabindex="0"
+        onclick="if(window.ModalManager) window.ModalManager.close('help-modal');"
+      >
+        ×
+      </button>
+      <h2
+        id="help-modal-title"
+        class="text-3xl font-bold text-[#f0d678] mb-4"
+        data-i18n="help.title"
+      >
+        ヘルプセンター
+      </h2>
+      <div class="flex justify-end mb-2">
+        <button
+          id="help-start-tutorial"
+          class="btn-primary"
+          data-i18n="help.btn.startTutorial"
+          title="Start Tutorial Again"
+        >
+          Start Tutorial Again
+        </button>
+      </div>
+      <div class="mt-2 text-sm text-gray-300">
+        <h3 data-i18n="help.sections.rules.title">1. ゲームの基本ルール</h3>
+        <p data-i18n="help.sections.rules.desc"></p>
+        <h3 data-i18n="help.sections.actions.title">2. 各アクションの説明</h3>
+        <ul class="list-disc pl-6">
+          <li data-i18n="help.sections.actions.item.hit"></li>
+          <li data-i18n="help.sections.actions.item.stand"></li>
+          <li data-i18n="help.sections.actions.item.double"></li>
+          <li data-i18n="help.sections.actions.item.split"></li>
+        </ul>
+        <h3 data-i18n="help.sections.judgement.title">3. 勝敗の決まり方</h3>
+        <p data-i18n="help.sections.judgement.desc"></p>
+        <h3 data-i18n="help.sections.faq.title">4. よくある質問（FAQ）</h3>
+        <p data-i18n="help.sections.faq.desc"></p>
+        <h3 data-i18n="help.sections.glossary.title">5. 用語集</h3>
+        <p data-i18n="help.sections.glossary.desc"></p>
+
+        <hr class="my-4 border-[#d4af37]/20" />
+        <h3 data-i18n="help.settings.title">ガイド設定</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" id="setting-show-tooltips" />
+            <span data-i18n="help.settings.showTooltips"></span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" id="setting-show-context" />
+            <span data-i18n="help.settings.showContextHelp"></span>
+          </label>
+          <label class="flex items-center gap-2">
+            <span data-i18n="help.settings.hintLevel"></span>
+            <select
+              id="setting-hint-level"
+              class="bg-[#1a2332] text-[#f0d678] px-2 py-1 rounded border border-[#d4af37]/40"
+            >
+              <option
+                value="beginner"
+                data-i18n="help.settings.hintLevel.beginner"
+              >
+                Beginner
+              </option>
+              <option
+                value="intermediate"
+                data-i18n="help.settings.hintLevel.intermediate"
+              >
+                Intermediate
+              </option>
+              <option value="expert" data-i18n="help.settings.hintLevel.expert">
+                Expert
+              </option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
 
     <!-- Bankruptcy Modal -->
-    <div id="bankruptcy-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden">
-      <div class="bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 border-4 border-[#d4af37]/30">
+    <div
+      id="bankruptcy-modal"
+      class="modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bankruptcy-modal-title"
+      data-overlay="true"
+      data-lock-scroll="true"
+      data-close-others="true"
+      data-multi="false"
+      tabindex="-1"
+    >
+      <div
+        class="bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 border-4 border-[#d4af37]/30 relative"
+      >
+        <button
+          class="close-btn absolute top-4 right-4 text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+          aria-label="閉じる"
+          title="閉じる"
+          tabindex="0"
+          onclick="if(window.ModalManager) window.ModalManager.close('bankruptcy-modal');"
+        >
+          ×
+        </button>
         <div class="text-center">
           <div class="text-6xl mb-4">💸</div>
-          <h2 class="text-3xl font-bold text-[#f0d678] mb-4">破産しました！</h2>
-          
+          <h2
+            id="bankruptcy-modal-title"
+            class="text-3xl font-bold text-[#f0d678] mb-4"
+          >
+            破産しました！
+          </h2>
+
           <div id="new-record-badge" class="hidden mb-4">
-            <div class="inline-block px-4 py-2 bg-gradient-to-r from-[#d4af37] to-[#b8941f] text-[#1a2332] rounded-full font-bold text-lg animate-pulse">
+            <div
+              class="inline-block px-4 py-2 bg-gradient-to-r from-[#d4af37] to-[#b8941f] text-[#1a2332] rounded-full font-bold text-lg animate-pulse"
+            >
               🎉 新記録達成！ 🎉
             </div>
           </div>
-          
+
           <div class="bg-[#0d5e3a]/30 rounded-2xl p-6 mb-6">
             <div class="mb-4">
               <div class="text-gray-400 text-sm mb-1">今回のスコア</div>
@@ -389,7 +689,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="flex gap-3">
             <button
               onclick="closeBankruptcyModal()"
@@ -409,18 +709,38 @@
     </div>
 
     <!-- Scoreboard Modal -->
-    <div id="scoreboard-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden flex justify-center items-center w-full h-full overflow-y-auto scrollbar-transparent">
-      <div class="bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-2xl w-full mx-4 border-4 border-[#d4af37]/30">
+    <div
+      id="scoreboard-modal"
+      class="modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="scoreboard-modal-title"
+      data-overlay="true"
+      data-lock-scroll="true"
+      data-multi="false"
+      tabindex="-1"
+    >
+      <div
+        class="bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-2xl w-full mx-4 border-4 border-[#d4af37]/30 max-h-[90vh] overflow-y-auto scrollbar-gold"
+      >
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-3xl font-bold text-[#f0d678]">📊 スコアボード</h2>
+          <h2
+            id="scoreboard-modal-title"
+            class="text-3xl font-bold text-[#f0d678]"
+          >
+            📊 スコアボード
+          </h2>
           <button
-            onclick="closeScoreBoard()"
-            class="text-gray-400 hover:text-white text-3xl leading-none"
+            class="text-gray-400 hover:text-white text-3xl leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+            aria-label="閉じる"
+            title="閉じる"
+            tabindex="0"
+            onclick="if(window.ModalManager) window.ModalManager.close('scoreboard-modal');"
           >
             ×
           </button>
         </div>
-        
+
         <!-- Statistics -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div class="bg-[#0d5e3a]/30 rounded-xl p-4 text-center">
@@ -448,11 +768,16 @@
             </div>
           </div>
         </div>
-        
+
         <!-- History -->
         <div>
-          <h3 class="text-xl font-bold text-[#f0d678] mb-4">履歴（最新10件）</h3>
-          <div id="score-history-list" class="space-y-3 max-h-64 overflow-y-auto scrollbar-gold">
+          <h3 class="text-xl font-bold text-[#f0d678] mb-4">
+            履歴（最新10件）
+          </h3>
+          <div
+            id="score-history-list"
+            class="space-y-3 max-h-64 overflow-y-auto scrollbar-gold"
+          >
             <!-- History items will be inserted here by JavaScript -->
           </div>
         </div>
@@ -460,6 +785,7 @@
     </div>
 
     <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/guide.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         if (window.i18n) window.i18n.init();
@@ -467,29 +793,47 @@
     </script>
     <script src="assets/js/score-manager.js"></script>
     <script src="assets/js/script.js"></script>
+
+    <script src="assets/js/modal.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.ModalManager) {
+          ModalManager.register("help-modal");
+          ModalManager.register("bankruptcy-modal");
+          ModalManager.register("scoreboard-modal");
+        }
+      });
+    </script>
     <script src="assets/js/game.js"></script>
-    
+
     <!-- Service Worker登録 -->
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./service-worker.js')
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./service-worker.js")
             .then((registration) => {
-              console.log('Service Worker registered successfully:', registration.scope);
-              
+              console.log(
+                "Service Worker registered successfully:",
+                registration.scope,
+              );
+
               // 新しいService Workerが利用可能になったときの処理
-              registration.addEventListener('updatefound', () => {
+              registration.addEventListener("updatefound", () => {
                 const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.addEventListener("statechange", () => {
+                  if (
+                    newWorker.state === "installed" &&
+                    navigator.serviceWorker.controller
+                  ) {
                     // 新しいバージョンが利用可能
-                    console.log('New version available! Please refresh.');
+                    console.log("New version available! Please refresh.");
                   }
                 });
               });
             })
             .catch((error) => {
-              console.error('Service Worker registration failed:', error);
+              console.error("Service Worker registration failed:", error);
             });
         });
       }

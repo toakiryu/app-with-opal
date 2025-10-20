@@ -34,6 +34,7 @@ Opal is an application creation platform provided by Google. It allows you to cr
 6. Pull Request を作成して、アプリを共有します
 
 Steps:
+
 1. Create your app in Opal
 2. Download files using the export function
 3. Create a new folder in the `apps/` directory

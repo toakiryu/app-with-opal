@@ -441,32 +441,76 @@
     const btn = document.getElementById("help-button");
     if (!btn) return;
     btn.addEventListener("click", openHelp);
+  }
 
-    // 再起動ボタン
+  function attachTutorialRestartButton() {
+    // 再起動ボタンのイベントリスナーを設定
     const startBtn = document.getElementById("help-start-tutorial");
-    if (startBtn) startBtn.addEventListener("click", () => startTutorial(true));
+    if (startBtn) {
+      // 既存のリスナーを削除するため、新しい関数を作成
+      const handleClick = () => {
+        console.log("[Guide] Tutorial restart button clicked");
+        // ヘルプモーダルを閉じてからチュートリアルを開始
+        closeHelp();
+        // 少し待ってからチュートリアルを開始（モーダルのアニメーション完了待ち）
+        setTimeout(() => {
+          console.log("[Guide] Starting tutorial");
+          startTutorial(true);
+        }, 150);
+      };
+      
+      // 既存のイベントリスナーをクリア（クローンで置き換え）
+      const newBtn = startBtn.cloneNode(true);
+      startBtn.parentNode.replaceChild(newBtn, startBtn);
+      
+      // 新しいイベントリスナーを追加
+      newBtn.addEventListener("click", handleClick);
+      console.log("[Guide] Tutorial restart button listener attached");
+    }
+  }
 
-    // 設定UIイベント
+  function attachGuideSettings() {
+    // 設定UIイベント（設定モーダル内）
     const chkTips = document.getElementById("setting-show-tooltips");
     const chkCtx = document.getElementById("setting-show-context");
     const selLvl = document.getElementById("setting-hint-level");
-    if (chkTips)
-      chkTips.addEventListener("change", () => {
-        hints.showTooltips = chkTips.checked;
+    
+    if (chkTips) {
+      chkTips.addEventListener("click", () => {
+        const isPressed = chkTips.getAttribute("aria-pressed") === "true";
+        hints.showTooltips = !isPressed;
+        chkTips.setAttribute("aria-pressed", String(!isPressed));
+        if (!isPressed) {
+          chkTips.classList.add("active");
+        } else {
+          chkTips.classList.remove("active");
+        }
         persistHints();
         if (!hints.showTooltips) hideTooltip();
       });
-    if (chkCtx)
-      chkCtx.addEventListener("change", () => {
-        hints.showContextHelp = chkCtx.checked;
+    }
+    
+    if (chkCtx) {
+      chkCtx.addEventListener("click", () => {
+        const isPressed = chkCtx.getAttribute("aria-pressed") === "true";
+        hints.showContextHelp = !isPressed;
+        chkCtx.setAttribute("aria-pressed", String(!isPressed));
+        if (!isPressed) {
+          chkCtx.classList.add("active");
+        } else {
+          chkCtx.classList.remove("active");
+        }
         persistHints();
         if (!hints.showContextHelp) setHint("");
       });
-    if (selLvl)
+    }
+    
+    if (selLvl) {
       selLvl.addEventListener("change", () => {
         hints.hintLevel = selLvl.value;
         persistHints();
       });
+    }
   }
 
   // Keyboard shortcuts
@@ -597,16 +641,31 @@
     const chkTips = document.getElementById("setting-show-tooltips");
     const chkCtx = document.getElementById("setting-show-context");
     const selLvl = document.getElementById("setting-hint-level");
+    
     if (chkTips) {
-      chkTips.checked = !!hints.showTooltips;
+      const isEnabled = !!hints.showTooltips;
+      chkTips.setAttribute("aria-pressed", String(isEnabled));
+      if (isEnabled) {
+        chkTips.classList.add("active");
+      } else {
+        chkTips.classList.remove("active");
+      }
       if (window.i18n)
         chkTips.title = window.i18n.t("help.settings.showTooltips");
     }
+    
     if (chkCtx) {
-      chkCtx.checked = !!hints.showContextHelp;
+      const isEnabled = !!hints.showContextHelp;
+      chkCtx.setAttribute("aria-pressed", String(isEnabled));
+      if (isEnabled) {
+        chkCtx.classList.add("active");
+      } else {
+        chkCtx.classList.remove("active");
+      }
       if (window.i18n)
         chkCtx.title = window.i18n.t("help.settings.showContextHelp");
     }
+    
     if (selLvl) {
       selLvl.value = hints.hintLevel || "beginner";
       if (window.i18n) selLvl.title = window.i18n.t("help.settings.hintLevel");
@@ -624,6 +683,7 @@
 
     attachTooltipHandlers();
     attachHelpButton();
+    attachGuideSettings();
     attachKeyboardShortcuts();
     maybeStartTutorial();
 
@@ -634,6 +694,16 @@
     window.addEventListener("langchange", () => {
       if (window.i18n) window.i18n.applyTooltipLabels();
     });
+
+    // モーダルが開かれたときの処理
+    document.addEventListener("modal:afterOpen", (e) => {
+      if (e.detail.id === "settings-modal") {
+        applySettingsToUI();
+      } else if (e.detail.id === "help-modal") {
+        // ヘルプモーダルが開かれたときにチュートリアル再起動ボタンのイベントリスナーを設定
+        attachTutorialRestartButton();
+      }
+    });
   }
 
   // expose minimal API
@@ -641,6 +711,7 @@
     openHelp,
     closeHelp,
     startTutorial,
+    applySettingsToUI,
   };
 
   if (document.readyState === "loading") {

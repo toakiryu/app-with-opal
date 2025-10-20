@@ -6,7 +6,7 @@
 const DEV_HOSTS = ["localhost", "127.0.0.1"];
 const IS_DEV = DEV_HOSTS.includes(self.location.hostname);
 
-const VERSION = "r20251020.5";
+const VERSION = "1.0.0-r202510201";
 
 const CACHE_NAME = `blackjack-pwa-${VERSION}${IS_DEV ? "-dev" : ""}`;
 

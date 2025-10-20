@@ -11,7 +11,7 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "blackjack_score_data";
+  const STORAGE_KEY = "blackjack_scores";
   const DEFAULT_START_CASH = 1000;
 
   // セキュリティ用の秘密鍵（ゲーム内で固定）
@@ -489,6 +489,18 @@
     exportData,
     importData,
     DEFAULT_START_CASH,
+    /**
+     * DataManagement用: 統計情報を返す
+     * @returns {object} { bestScore, totalGames, totalMatches }
+     */
+    getStatistics: function () {
+      const data = loadScoreData();
+      return {
+        bestScore: data && typeof data.bestScore === 'number' ? data.bestScore : 0,
+        totalGames: data && typeof data.totalGames === 'number' ? data.totalGames : 0,
+        totalMatches: data && typeof data.totalMatches === 'number' ? data.totalMatches : 0,
+      };
+    },
     // デバッグ用（本番環境では削除を検討）
     debug: {
       checkIntegrity: debugCheckIntegrity,

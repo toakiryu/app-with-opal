@@ -13,7 +13,8 @@ class SfxManager {
       musicEnabled: false,
       volume: 0.8,
       musicVolume: 0.5,
-      reducedMotion: false
+      reducedMotion: false,
+      immersiveMode: false
     };
     this.audioContext = null;
     this.initialized = false;
@@ -50,6 +51,7 @@ class SfxManager {
     if (options.volume !== undefined) this.settings.volume = options.volume;
     if (options.musicVolume !== undefined) this.settings.musicVolume = options.musicVolume;
     if (options.reducedMotion !== undefined) this.settings.reducedMotion = options.reducedMotion;
+    if (options.immersiveMode !== undefined) this.settings.immersiveMode = options.immersiveMode;
 
     try {
       // AudioContextの初期化を試みる（オプション）
@@ -250,6 +252,24 @@ class SfxManager {
   }
 
   /**
+   * 没入モード設定を切替
+   * @returns {boolean} 新しい設定
+   */
+  toggleImmersiveMode() {
+    this.settings.immersiveMode = !this.settings.immersiveMode;
+    this.saveSettings();
+    
+    // CSSクラスで要素の表示/非表示を制御
+    if (this.settings.immersiveMode) {
+      document.body.classList.add('immersive-mode');
+    } else {
+      document.body.classList.remove('immersive-mode');
+    }
+    
+    return this.settings.immersiveMode;
+  }
+
+  /**
    * Web Audio / Audioの利用可否判定
    * @returns {boolean}
    */
@@ -298,6 +318,15 @@ class SfxManager {
       }
     }
     
+    // 没入モードの適用
+    if (newSettings.immersiveMode !== undefined) {
+      if (newSettings.immersiveMode) {
+        document.body.classList.add('immersive-mode');
+      } else {
+        document.body.classList.remove('immersive-mode');
+      }
+    }
+    
     this.saveSettings();
   }
 
@@ -314,6 +343,11 @@ class SfxManager {
         // 動きの軽減の初期状態を反映
         if (this.settings.reducedMotion) {
           document.body.classList.add('reduced-motion');
+        }
+        
+        // 没入モードの初期状態を反映
+        if (this.settings.immersiveMode) {
+          document.body.classList.add('immersive-mode');
         }
       }
     } catch (error) {

@@ -48,7 +48,7 @@
 
 ### localStorage キー
 
-`blackjack_score_data`
+`blackjack_scores`
 
 ### データスキーマ
 

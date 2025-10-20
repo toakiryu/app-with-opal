@@ -15,9 +15,84 @@
      */
     init() {
       if (this.initialized) return;
-
       this.attachEventListeners();
       this.initialized = true;
+    }
+
+    /**
+     * インポート・リセット共通の結果UI表示
+     * @param {boolean} success - 成功かどうか
+     * @param {string} [errorMsg] - 失敗時のエラーメッセージ
+     * @param {string} [successType] - "import" or "reset" で成功時の文言を切り替え
+     */
+    showImportResult(success, errorMsg, successType) {
+      const modal = document.getElementById("data-management-modal");
+      if (!modal) return;
+      // 既存の内容を一時的に隠す
+      const content = modal.querySelector(
+        ".modal-content, .modal__content, .modal-body, .modal__body"
+      );
+      if (content) content.style.display = "none";
+
+      // 結果表示用のdiv
+      let resultDiv = modal.querySelector(".import-result-message");
+      if (!resultDiv) {
+        resultDiv = document.createElement("div");
+        resultDiv.className =
+          "import-result-message flex items-center justify-center fixed inset-0 z-[12000]";
+        modal.appendChild(resultDiv);
+      }
+      resultDiv.innerHTML = "";
+
+      // 共通: モーダル風のラッパーdiv
+      let wrapper = document.createElement("div");
+      wrapper.className =
+        "modal-content bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 border-4 border-[#d4af37]/30 flex flex-col items-center";
+
+      if (success) {
+        // 成功時の文言・アイコン
+        let msg = "";
+        let icon = "";
+        let color = "text-green-400";
+        if (successType === "reset") {
+          msg = "データをリセットしました";
+          icon = "🗑️";
+        } else {
+          msg = "データをインポートしました";
+          icon = "✅";
+        }
+        wrapper.innerHTML = `
+          <div class="text-center text-2xl font-bold ${color} mb-6 flex items-center gap-3">${icon}<br/>${msg}</div>
+          <button id="import-reload-btn" class="w-full bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(30,64,175,0.5)] transition-all flex items-center justify-center gap-2 text-lg mt-2">
+            <span>🔄</span><span>アプリを再読み込み</span>
+          </button>
+        `;
+        resultDiv.appendChild(wrapper);
+        document.getElementById("import-reload-btn").onclick = () =>
+          location.reload();
+        // 効果音
+        if (window.Sfx) window.Sfx.playSound("win");
+      } else {
+        let msg = "";
+        if (successType === "reset") {
+          msg = "リセット";
+        } else {
+          msg = "インポート";
+        }
+        wrapper.innerHTML = `
+          <div class="text-2xl font-bold text-red-500 mb-4 flex items-center gap-2">❌<br/>インポートに失敗しました</div>
+          <div class="mb-4 text-gray-300">${errorMsg ? errorMsg : ""}</div>
+          <button id="import-fail-close-btn" class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold text-lg shadow hover:bg-gray-600 transition-all focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:ring-offset-2 mt-2">OK</button>
+        `;
+        resultDiv.appendChild(wrapper);
+        document.getElementById("import-fail-close-btn").onclick = () => {
+          // 結果表示を消して元の内容を戻す
+          resultDiv.remove();
+          if (content) content.style.display = "";
+        };
+        // 効果音
+        if (window.Sfx) window.Sfx.playSound("lose");
+      }
     }
 
     /**
@@ -63,12 +138,15 @@
 
           const bestScoreEl = document.getElementById("data-mgmt-best-score");
           const totalGamesEl = document.getElementById("data-mgmt-total-games");
-          const totalMatchesEl = document.getElementById("data-mgmt-total-matches");
+          const totalMatchesEl = document.getElementById(
+            "data-mgmt-total-matches"
+          );
           const dataSizeEl = document.getElementById("data-mgmt-size");
 
           if (bestScoreEl) bestScoreEl.textContent = stats.bestScore || 0;
           if (totalGamesEl) totalGamesEl.textContent = stats.totalGames || 0;
-          if (totalMatchesEl) totalMatchesEl.textContent = stats.totalMatches || 0;
+          if (totalMatchesEl)
+            totalMatchesEl.textContent = stats.totalMatches || 0;
 
           // データサイズを計算
           if (dataSizeEl) {
@@ -87,7 +165,12 @@
     calculateDataSize() {
       try {
         let totalSize = 0;
-        const keys = ["blackjack_scores", "blackjack_settings", "blackjack_tutorial", "blackjack_hints"];
+        const keys = [
+          "blackjack_scores",
+          "blackjack_settings",
+          "blackjack_tutorial",
+          "blackjack_hints",
+        ];
 
         keys.forEach((key) => {
           const item = localStorage.getItem(key);
@@ -111,7 +194,7 @@
       const k = 1024;
       const sizes = ["Bytes", "KB", "MB"];
       const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+      return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
     }
 
     /**
@@ -135,7 +218,9 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `blackjack-data-${new Date().toISOString().split("T")[0]}.json`;
+        a.download = `blackjack-data-${
+          new Date().toISOString().split("T")[0]
+        }.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -175,19 +260,28 @@
           // 確認ダイアログ
           const confirmed = confirm(
             `このデータをインポートしますか？\n\n` +
-            `エクスポート日: ${new Date(data.exportDate).toLocaleString()}\n` +
-            `現在のデータは上書きされます。`
+              `エクスポート日: ${new Date(
+                data.exportDate
+              ).toLocaleString()}\n` +
+              `現在のデータは上書きされます。`
           );
           if (!confirmed) {
             this.setModalDisabled(false);
             return;
           }
           // データを復元
-          if (data.scores) localStorage.setItem("blackjack_scores", data.scores);
-          if (data.settings) localStorage.setItem("blackjack_settings", data.settings);
-          if (data.tutorial) localStorage.setItem("blackjack_tutorial", data.tutorial);
+          if (data.scores)
+            localStorage.setItem("blackjack_scores", data.scores);
+          if (data.settings)
+            localStorage.setItem("blackjack_settings", data.settings);
+          if (data.tutorial)
+            localStorage.setItem("blackjack_tutorial", data.tutorial);
           if (data.hints) localStorage.setItem("blackjack_hints", data.hints);
-          if (data.blackjack_score_data) localStorage.setItem("blackjack_score_data", data.blackjack_score_data);
+          if (data.blackjack_score_data)
+            localStorage.setItem(
+              "blackjack_score_data",
+              data.blackjack_score_data
+            );
 
           importSuccess = true;
         } catch (error) {
@@ -197,6 +291,7 @@
 
         // UIを更新
         this.showImportResult(importSuccess, errorMsg);
+        this.showImportResult(importSuccess, errorMsg, "import");
         this.setModalDisabled(false);
       };
       reader.readAsText(file);
@@ -211,54 +306,14 @@
       const modal = document.getElementById("data-management-modal");
       if (!modal) return;
       // ボタンとinputをすべて対象
-      const elements = modal.querySelectorAll("button, input, textarea, select");
+      const elements = modal.querySelectorAll(
+        "button, input, textarea, select"
+      );
       elements.forEach((el) => {
         el.disabled = !!disabled;
       });
     }
 
-    /**
-     * インポート結果のUI表示
-     */
-    showImportResult(success, errorMsg) {
-      const modal = document.getElementById("data-management-modal");
-      if (!modal) return;
-      // 既存の内容を一時的に隠す
-      const content = modal.querySelector(".modal-content, .modal__content, .modal-body, .modal__body");
-      if (content) content.style.display = "none";
-
-      // 結果表示用のdiv
-      let resultDiv = modal.querySelector(".import-result-message");
-      if (!resultDiv) {
-        resultDiv = document.createElement("div");
-        resultDiv.className = "import-result-message flex flex-col items-center justify-center py-8";
-        modal.appendChild(resultDiv);
-      }
-      resultDiv.innerHTML = "";
-
-      if (success) {
-        resultDiv.innerHTML = `
-          <div class="text-2xl font-bold text-green-600 mb-4">✅ インポート成功！</div>
-          <button id="import-reload-btn" class="px-6 py-3 rounded bg-blue-600 text-white font-bold text-lg shadow hover:bg-blue-700 transition">クリックで再読み込み</button>
-        `;
-        document.getElementById("import-reload-btn").onclick = () => location.reload();
-        // 効果音
-        if (window.Sfx) window.Sfx.playSound("win");
-      } else {
-        resultDiv.innerHTML = `
-          <div class="text-2xl font-bold text-red-600 mb-4">❌ インポートに失敗しました</div>
-          <div class="mb-4 text-gray-700">${errorMsg ? errorMsg : ""}</div>
-          <button id="import-fail-close-btn" class="px-6 py-3 rounded bg-gray-500 text-white font-bold text-lg shadow hover:bg-gray-600 transition">OK</button>
-        `;
-        document.getElementById("import-fail-close-btn").onclick = () => {
-          // 結果表示を消して元の内容を戻す
-          resultDiv.remove();
-          if (content) content.style.display = "";
-        };
-        // 効果音
-        if (window.Sfx) window.Sfx.playSound("lose");
-      }
-    }
 
     /**
      * データをリセット
@@ -267,9 +322,9 @@
       // 確認ダイアログ
       const confirmed = confirm(
         "⚠️ 警告\n\n" +
-        "すべての統計データを削除します。\n" +
-        "この操作は取り消せません。\n\n" +
-        "本当に削除しますか？"
+          "すべての統計データを削除します。\n" +
+          "この操作は取り消せません。\n\n" +
+          "本当に削除しますか？"
       );
 
       if (!confirmed) return;
@@ -277,31 +332,30 @@
       // 二重確認
       const doubleConfirmed = confirm(
         "最終確認\n\n" +
-        "本当にすべてのデータを削除しますか？\n" +
-        "この操作は取り消せません。"
+          "本当にすべてのデータを削除しますか？\n" +
+          "この操作は取り消せません。"
       );
 
       if (!doubleConfirmed) return;
+
+      // モーダル内の全ボタン・入力を無効化
+      this.setModalDisabled(true);
 
       try {
         // スコアデータのみをリセット（設定は保持）
         localStorage.removeItem("blackjack_scores");
 
-        this.showFeedback("✅ データをリセットしました", "success");
-        this.updateStats();
+        this.showImportResult(true, undefined, "reset");
 
         // 効果音
         if (window.Sfx) {
           window.Sfx.playSound("stand");
         }
-
-        // スコア表示を更新
-        if (window.ScoreManager) {
-          window.ScoreManager.refreshDisplay();
-        }
       } catch (error) {
         console.error("[DataManagement] リセットエラー:", error);
-        this.showFeedback("❌ リセットに失敗しました", "error");
+        this.showImportResult(false, error.message || "リセットに失敗しました");
+      } finally {
+        this.setModalDisabled(false);
       }
     }
 

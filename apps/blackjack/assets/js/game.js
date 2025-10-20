@@ -456,6 +456,10 @@ function dealerPlay() {
 
     if (shouldHit) {
       dealerHand.push(deck.pop());
+      // 効果音を再生
+      if (window.Sfx) {
+        window.Sfx.playSound("card-flip");
+      }
       renderHands();
       updateScores();
     } else {
